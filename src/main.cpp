@@ -42,7 +42,7 @@ void RunESP() {
 void Setup(const HMODULE instance) {
     try {
         CreateConsole();
-        mem.setup(); // for some reason i never called this??
+        mem.setup(); // for some reason this was never called??
         GUI::Setup();
         Hooks::Setup();
 
