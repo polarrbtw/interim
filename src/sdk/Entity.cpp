@@ -14,10 +14,14 @@ uint32_t Entity::GetWeaponNumber() const { return m_cinfo.WeaponNumber; }
 
 Vector3 Entity::GetPosition() const { return m_centity.Position; };
 
-void Entity::SetInfo(const CEntity_t& centity, const ClientInfo_t& cinfo, int index) {
+const char* Entity::GetName() { return m_name; }
+
+void Entity::SetInfo(const CEntity_t& centity, const ClientInfo_t& cinfo, const char* name, const char* clantag, int index) {
 	m_centity = centity;
 	m_cinfo = cinfo;
 	m_index = index;
+	m_name = name;
+	m_clantag = clantag;
 }
 
 // localplayer

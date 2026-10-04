@@ -1,5 +1,6 @@
 #include "EntityManager.hpp"
 #include <common.hpp>
+#include <hooks/functions.hpp>
 
 #define SV_MAXCLIENTS 32
 
@@ -14,7 +15,12 @@ void EntityManager::UpdateEntities() {
 		ClientInfo_t cinfo = mem.raw<ClientInfo_t>(offsets::ClientInfo + i * sizeof(ClientInfo_t));
 		
 		Entity entity{};
-		entity.SetInfo(cent, cinfo, i);
+		//entity.SetInfo(cent, cinfo, i);
+		const char* name = fn::CG_GetClientName(entity.GetIndex());
+		const char* clantag = fn::CG_GetClientClantag(entity.GetIndex());
+		entity.SetInfo(cent, cinfo, name, clantag, i);
+
+		//printf("name: %s\n", name);
 
 		if (!entity.IsValid()) continue;
 		if (entity.GetIndex() == EntityManager::GetLocalPlayer()->GetIndex()) continue;
@@ -30,7 +36,12 @@ void EntityManager::UpdateLocalPlayer() {
 	ClientInfo_t cinfo = mem.raw<ClientInfo_t>(offsets::ClientInfo + i * sizeof(ClientInfo_t));
 	float FOV = mem.read<float>(offsets::FOV);
 
-	localPlayer.SetInfo(cent, cinfo, i);
+	const char* name = CG_GetUsernameX(i);
+	const char* clantag = CG_GetClantag(i);
+
+	localPlayer.SetInfo(cent, cinfo, name, clantag, i);
+
+	//printf("localplayer: %s\n clantag: %s\n", name, clantag);
 }
 
 const LocalPlayer *EntityManager::GetLocalPlayer() { return &localPlayer; }

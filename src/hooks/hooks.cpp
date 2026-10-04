@@ -20,10 +20,10 @@ void Hooks::Setup() {
     if (MH_CreateHook(VirtualFunction(GUI::device, 16), &Reset, reinterpret_cast<void**>(&oReset)))
         throw std::runtime_error("Unable to hook Reset");
 
-    if (MH_CreateHook(reinterpret_cast<LPVOID>(functions::CL_ParseSnapshot), &hk_ParseSnapshot, reinterpret_cast<LPVOID*>(&oParseSnapshot)))
+    if (MH_CreateHook(reinterpret_cast<LPVOID>(offsets::fn::CL_ParseSnapshot), &hk_ParseSnapshot, reinterpret_cast<LPVOID*>(&oParseSnapshot)))
         throw std::runtime_error("Unable to hook CL_ParseSnapshot");
 
-    if (MH_CreateHook(reinterpret_cast<LPVOID>(mem.modBase + functions::ScreenshotRequest), &hk_ScreenshotRequest, reinterpret_cast<LPVOID*>(&oScreenshotRequest)))
+    if (MH_CreateHook(reinterpret_cast<LPVOID>(mem.modBase + offsets::fn::ScreenshotRequest), &hk_ScreenshotRequest, reinterpret_cast<LPVOID*>(&oScreenshotRequest)))
         throw std::runtime_error("Unable to hook ScreenshotRequest");
 
     if (MH_EnableHook(MH_ALL_HOOKS))

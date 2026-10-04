@@ -42,8 +42,9 @@ void RunESP() {
 void Setup(const HMODULE instance) {
     try {
         CreateConsole();
-        mem.setup(); // for some reason this was never called??
+        mem.Setup(); // for some reason this was never called??
         GUI::Setup();
+        fn::Setup(); // actually initialize but wanted to keep it consistent
         Hooks::Setup();
 
         std::thread(UpdateGlobals).detach();

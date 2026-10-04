@@ -2,6 +2,7 @@
 #include <util/memory.hpp>
 #include <sdk/offsets.hpp>
 #include <sdk/structs.hpp>
+#include <hooks/functions.hpp>
 
 class Globals {
 public:

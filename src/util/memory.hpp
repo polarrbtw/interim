@@ -11,7 +11,7 @@ public:
   uintptr_t cod4xBase{};
   HMODULE cod4xModule{ nullptr };
 
-  bool setup() {
+  bool Setup() {
     hModule = GetModuleHandleA(NULL);
     modBase = reinterpret_cast<uintptr_t>(hModule);
 
@@ -54,7 +54,7 @@ public:
   void Patch(uintptr_t addr, int instructions, int size) {}
 
   void WriteDvar(uintptr_t dvar, int option) {
-      mem.write<BYTE>(dvar, option);
+      write<BYTE>(dvar, option);
   }
 
 };

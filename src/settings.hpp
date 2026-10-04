@@ -18,6 +18,11 @@ namespace Settings {
 		inline bool NoSmoke{ false };
 		inline bool NoJumpCooldown{ false };
 	}
+
+	namespace Aimbot {
+		inline bool Enabled{ false };
+	}
+
 	/*
 	namespace Debug {
 		inline float width{ 30.0f };

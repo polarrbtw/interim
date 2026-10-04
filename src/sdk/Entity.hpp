@@ -18,12 +18,16 @@ public:
 
   Vector3 GetPosition() const;
 
-  void SetInfo(const CEntity_t& centity, const ClientInfo_t& cinfo, int index);
+  const char* GetName();
+
+  void SetInfo(const CEntity_t& centity, const ClientInfo_t& cinfo, const char* name, const char* clantag, int index);
 
 protected:
   CEntity_t m_centity;
   ClientInfo_t m_cinfo;
   int32_t m_index;
+  const char* m_name;
+  const char* m_clantag;
 };
 
 class LocalPlayer : public Entity {

@@ -14,12 +14,16 @@ namespace offsets {
 	inline constexpr uintptr_t ScreenWidth = 0x00797608;
 	inline constexpr uintptr_t ScreenHeight = 0x0079760C;
 	inline constexpr uintptr_t FOV = 0xC7AF1AC; // iw3mp.exe+C7AF1AC
-}
 
-// screenshotrequest in ida - 0x64E53EE0
-namespace functions {
-	inline constexpr uintptr_t CL_ParseSnapshot = 0x473710;
-	inline constexpr uintptr_t ScreenshotRequest = 0x154010; // cod4x_021.dll+154010
+	// screenshotrequest in ida - 0x64E53EE0 ; image base - 0x64D00000
+	namespace fn {
+		inline constexpr uintptr_t CL_ParseSnapshot = 0x473710; // in iw3mp.exe
+		inline constexpr uintptr_t ScreenshotRequest = 0x154010; // cod4x_021.dll+154010
+		inline constexpr uintptr_t CG_GetUsernameX = 0x42800; // cod4x_021.dll+0x42800
+		inline constexpr uintptr_t CG_GetClantag = 0x42810; // cod4x_021.dll+0x42810
+		inline constexpr uintptr_t Com_IsLegacyServer = 0x6CFF0; // cod4x_021.dll+0x6CFF0
+	}
+
 }
 
 namespace cvars {

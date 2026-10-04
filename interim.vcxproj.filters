@@ -75,6 +75,9 @@
     <ClCompile Include="src\util\math.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\hooks\functions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\hooks\hooks.hpp">
@@ -164,12 +167,12 @@
     <ClInclude Include="src\settings.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\hooks\functions.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="interim.slnx" />
     <None Include="CppProperties.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="todo.txt" />
   </ItemGroup>
 </Project>

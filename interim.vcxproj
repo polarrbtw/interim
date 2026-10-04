@@ -179,6 +179,7 @@
     <ClCompile Include="ext\minhook\hde\hde32.c" />
     <ClCompile Include="ext\minhook\hde\hde64.c" />
     <ClCompile Include="src\features\esp.cpp" />
+    <ClCompile Include="src\hooks\functions.cpp" />
     <!-- Project Sources -->
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\hooks\hooks.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="src\common.hpp" />
     <ClInclude Include="src\features\esp.hpp" />
     <ClInclude Include="src\globals.hpp" />
+    <ClInclude Include="src\hooks\functions.hpp" />
     <ClInclude Include="src\hooks\hooks.hpp" />
     <ClInclude Include="src\render\gui.hpp" />
     <ClInclude Include="src\render\menu.hpp" />
@@ -222,9 +224,6 @@
   <ItemGroup>
     <None Include="CppProperties.json" />
     <None Include="interim.slnx" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="todo.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
