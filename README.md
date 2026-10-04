@@ -20,13 +20,17 @@ A lightweight WIP internal cheat for COD4x (v21.5)
 
 
 
-\- \[ ] Bone based Aimbot
+\- \[ ] More Visual Options
+
+\- \[ ] Bone Based Aimbot
 
 \- \[ ] Silent Aim
 
 \- \[ ] Triggerbot
 
-\- \[ ] More visual options
+\- \[ ] Pattern Scanning
+
+\- \[ ] Proper ImGui Menu
 
 \- TBD
 
