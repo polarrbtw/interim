@@ -4,6 +4,8 @@
 
 A lightweight WIP internal cheat for COD4x (v21.5)
 
+
+
 \## Features (wip)
 
 
@@ -11,6 +13,8 @@ A lightweight WIP internal cheat for COD4x (v21.5)
 \- Box ESP
 
 \- Cvars
+
+
 
 \## Roadmap
 
@@ -26,6 +30,8 @@ A lightweight WIP internal cheat for COD4x (v21.5)
 
 \- TBD
 
+
+
 \## Requirements
 
 
@@ -35,6 +41,8 @@ A lightweight WIP internal cheat for COD4x (v21.5)
 \- MSVC
 
 \- COD4x \[v21.5](https://fpschallenge.eu/guides?game=cod4)
+
+
 
 \## Acknowledgements
 
