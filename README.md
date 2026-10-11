@@ -7,6 +7,7 @@ A lightweight WIP internal cheat for COD4x (v21.5)
 - ESP (Bone, Name, Box)
 - Cvars
 
+
 ## Roadmap
 
 - [ ] Fix Inconsistencies (file names, variable names)
@@ -18,11 +19,13 @@ A lightweight WIP internal cheat for COD4x (v21.5)
 - [ ] Proper ImGui Menu
 - TBD
 
+
 ## Requirements
 
 - Windows 11 / 10
 - MSVC
 - COD4x [v21.5](https://fpschallenge.eu/guides?game=cod4)
+
 
 ## Acknowledgements
 
