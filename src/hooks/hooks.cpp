@@ -20,11 +20,14 @@ void Hooks::Setup() {
     if (MH_CreateHook(VirtualFunction(GUI::device, 16), &Reset, reinterpret_cast<void**>(&oReset)))
         throw std::runtime_error("Unable to hook Reset");
 
-    if (MH_CreateHook(reinterpret_cast<LPVOID>(offsets::fn::CL_ParseSnapshot), &hk_ParseSnapshot, reinterpret_cast<LPVOID*>(&oParseSnapshot)))
+    if (MH_CreateHook(reinterpret_cast<LPVOID>(offsets::engine::CL_ParseSnapshot), &hk_ParseSnapshot, reinterpret_cast<LPVOID*>(&oParseSnapshot)))
         throw std::runtime_error("Unable to hook CL_ParseSnapshot");
 
-    if (MH_CreateHook(reinterpret_cast<LPVOID>(mem.modBase + offsets::fn::ScreenshotRequest), &hk_ScreenshotRequest, reinterpret_cast<LPVOID*>(&oScreenshotRequest)))
+    if (MH_CreateHook(reinterpret_cast<LPVOID>(Mem.Cod4xBase + offsets::engine::ScreenshotRequest), &hk_ScreenshotRequest, reinterpret_cast<LPVOID*>(&oScreenshotRequest)))
         throw std::runtime_error("Unable to hook ScreenshotRequest");
+
+    if (MH_CreateHook(reinterpret_cast<LPVOID>(offsets::engine::Com_Error), &hk_ComError, reinterpret_cast<LPVOID*>(&oCom_Error)))
+        throw std::runtime_error("Unable to hook Com_Error");
 
     if (MH_EnableHook(MH_ALL_HOOKS))
         throw std::runtime_error("Unable to enable hooks");
@@ -55,9 +58,10 @@ long __stdcall Hooks::EndScene(IDirect3DDevice9 *device) {
   ImGui::NewFrame();
 
   ESP::DrawPlayers();
-  
-  if (GUI::open)
-    GUI::RenderMenu();
+
+  if (GUI::open) {
+      GUI::RenderMenu();
+  }
 
   ImGui::EndFrame();
   ImGui::Render();
@@ -73,6 +77,7 @@ HRESULT __stdcall Hooks::Reset(IDirect3DDevice9 *device, D3DPRESENT_PARAMETERS *
   return result;
 }
 
+// game/engine functions
 void __cdecl Hooks::hk_ParseSnapshot(void* msg) {
     oParseSnapshot(msg);
     if (globals && globals->IsInGame) {
@@ -83,7 +88,20 @@ void __cdecl Hooks::hk_ParseSnapshot(void* msg) {
 
 // needs testing
 int __cdecl Hooks::hk_ScreenshotRequest(int msg, int command) {
+    printf("[!] ScreenshotRequest ran");
     globals->FrameCounter = 3;
 
     return oScreenshotRequest(msg, command);
+}
+
+void __cdecl Hooks::hk_ComError(int a1, char* Format, ...) {
+    printf("[*] Com_Error ran\n");
+
+    char buffer[0x1000u];
+    va_list va; // [esp+20h] [ebp+10h] BYREF
+    va_start(va, Format);
+    //_vsnprintf(&Buffer, 0x1000u, Format, va);
+    vsnprintf(buffer, sizeof(buffer), Format, va);
+
+    oCom_Error(4, const_cast<char*>("%s"), buffer); // case 4 is empty
 }

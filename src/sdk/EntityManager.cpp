@@ -1,6 +1,6 @@
 #include "EntityManager.hpp"
 #include <common.hpp>
-#include <hooks/functions.hpp>
+#include <hooks/engine.hpp>
 
 #define SV_MAXCLIENTS 32
 
@@ -9,41 +9,37 @@ void EntityManager::UpdateEntities() {
 
 	UpdateLocalPlayer();
 
-	EntityManager::entities.clear();
-	for (int i = 0; i <= SV_MAXCLIENTS; ++i) {
-		CEntity_t cent = mem.raw<CEntity_t>(offsets::CEntity + i * sizeof(CEntity_t));
-		ClientInfo_t cinfo = mem.raw<ClientInfo_t>(offsets::ClientInfo + i * sizeof(ClientInfo_t));
+	EntityManager::EntityList.clear();
+	for (int index = 0; index <= SV_MAXCLIENTS; ++index) {
+		CEntity_t cent = Mem.raw<CEntity_t>(offsets::CEntity + index * sizeof(CEntity_t));
+		ClientInfo_t cinfo = Mem.raw<ClientInfo_t>(offsets::ClientInfo + index * sizeof(ClientInfo_t));
 		
 		Entity entity{};
-		//entity.SetInfo(cent, cinfo, i);
-		const char* name = fn::CG_GetClientName(entity.GetIndex());
-		const char* clantag = fn::CG_GetClientClantag(entity.GetIndex());
-		entity.SetInfo(cent, cinfo, name, clantag, i);
-
-		//printf("name: %s\n", name);
+		const char* name = Engine::CG_GetClientName(index);
+		const char* clantag = Engine::CG_GetClientClantag(index);
+		entity.SetInfo(cent, cinfo, name, clantag, index);
 
 		if (!entity.IsValid()) continue;
 		if (entity.GetIndex() == EntityManager::GetLocalPlayer()->GetIndex()) continue;
 
-		EntityManager::entities.push_back(entity);
+		EntityManager::EntityList.push_back(entity);
 	}
 }
 
 void EntityManager::UpdateLocalPlayer() {
-	int i = mem.raw<int>(offsets::CG); // localplayer index
+	int index = Mem.raw<int>(offsets::CG); // localplayer index
 
-	CEntity_t cent = mem.raw<CEntity_t>(offsets::CEntity + i * sizeof(CEntity_t));
-	ClientInfo_t cinfo = mem.raw<ClientInfo_t>(offsets::ClientInfo + i * sizeof(ClientInfo_t));
-	float FOV = mem.read<float>(offsets::FOV);
+	CEntity_t cent = Mem.raw<CEntity_t>(offsets::CEntity + index * sizeof(CEntity_t));
+	ClientInfo_t cinfo = Mem.raw<ClientInfo_t>(offsets::ClientInfo + index * sizeof(ClientInfo_t));
+	float FOV = Mem.read<float>(offsets::FOV);
 
-	const char* name = CG_GetUsernameX(i);
-	const char* clantag = CG_GetClantag(i);
+	const char* name = CG_GetUsernameX(index);
+	const char* clantag = CG_GetClantag(index);
 
-	localPlayer.SetInfo(cent, cinfo, name, clantag, i);
+	LocalPlayer.SetInfo(cent, cinfo, name, clantag, index);
 
-	//printf("localplayer: %s\n clantag: %s\n", name, clantag);
 }
 
-const LocalPlayer *EntityManager::GetLocalPlayer() { return &localPlayer; }
+const LocalEntity *EntityManager::GetLocalPlayer() { return &LocalPlayer; }
 
-const std::vector<Entity> &EntityManager::GetEntities() { return entities; }
+const std::vector<Entity> &EntityManager::GetEntities() { return EntityList; }

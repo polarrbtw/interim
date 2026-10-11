@@ -8,13 +8,22 @@
 #include <sdk/Entity.hpp>
 #include <sdk/offsets.hpp>
 
+inline void foo() {}
+
 // allow using memory functions in other files
-extern Memory mem;
+extern Memory Mem;
 
 // debug prints
-#define okay(msg, ...) printf("[+] " msg "\n", ##__VA_ARGS__)
-#define info(msg, ...) printf("[*] " msg "\n", ##__VA_ARGS__)
-#define error(msg, ...) printf("[-] " msg "\n", ##__VA_ARGS__)
+#ifdef _DEBUG
+	#define okay(msg, ...) printf("[+] " msg "\n", ##__VA_ARGS__)
+	#define info(msg, ...) printf("[*] " msg "\n", ##__VA_ARGS__)
+	#define error(msg, ...) printf("[-] " msg "\n", ##__VA_ARGS__)
+#else
+	#define okay(msg, ...)
+	#define info(msg, ...)
+	#define error(msg, ...)
+#endif
+
 
 // imgui colors
 constexpr ImU32 RED = IM_COL32(255, 0, 0, 255);

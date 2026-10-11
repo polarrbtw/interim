@@ -29,4 +29,9 @@ using ScreenshotRequestFn = int(__cdecl*)(int, int);
 inline ScreenshotRequestFn oScreenshotRequest{ nullptr };
 int __cdecl hk_ScreenshotRequest(int msg, int command);
 
+// Com_Error
+using Com_ErrorFn = void(__cdecl*)(int a1, char* Format, ...);
+inline Com_ErrorFn oCom_Error{ nullptr };
+void __cdecl hk_ComError(int a1, char* Format, ...);
+
 }; // namespace Hooks

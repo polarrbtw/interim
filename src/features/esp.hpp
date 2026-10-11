@@ -2,4 +2,4 @@
 
 namespace ESP {
 	void DrawPlayers();
-}
+} // namespace ESP

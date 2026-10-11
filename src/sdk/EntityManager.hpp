@@ -7,10 +7,10 @@ public:
   void UpdateEntities();
   void UpdateLocalPlayer();
 
-  const static LocalPlayer* GetLocalPlayer();
+  const static LocalEntity* GetLocalPlayer();
   const static std::vector<Entity>& GetEntities();
 
 private:
-  inline static std::vector<Entity> entities{};
-  inline static LocalPlayer localPlayer{};
+  inline static std::vector<Entity> EntityList{};
+  inline static LocalEntity LocalPlayer{}; // fix naming here
 };

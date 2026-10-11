@@ -18,9 +18,9 @@ public:
 
   Vector3 GetPosition() const;
 
-  const char* GetName();
+  const char* GetName() const;
 
-  void SetInfo(const CEntity_t& centity, const ClientInfo_t& cinfo, const char* name, const char* clantag, int index);
+  void SetInfo(CEntity_t& centity, const ClientInfo_t& cinfo, const char* name, const char* clantag, int index);
 
 protected:
   CEntity_t m_centity;
@@ -30,12 +30,12 @@ protected:
   const char* m_clantag;
 };
 
-class LocalPlayer : public Entity {
+class LocalEntity : public Entity {
 public:
   float FOV;
   
   Vector2 GetViewAngles() const;
 
   float GetFOV() const;
-  float SetFOV(float newFOV);
+  void SetFOV(float newFOV);
 };

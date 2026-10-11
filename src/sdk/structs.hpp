@@ -1,8 +1,6 @@
 #pragma once
 #include <util/math.hpp>
 
-typedef unsigned short word;
-
 // Other stances
 // Walking and Moving: 1024
 // Crouching and Moving: 4096
@@ -35,6 +33,32 @@ enum ENTITYTYPE : uint32_t {
     TYPE_TURRET = 11,
     TYPE_HELICOPTER = 12,
     TYPE_OLDEXPLOSIVE = 78,
+};
+
+// should add hips maybe
+enum BONE : uint32_t {
+    HELMET = 0,
+    HEAD,
+    NECK,
+    SPINE,
+    PELVIS,
+    LEFTCLAVICLE,
+    RIGHTCLAVICLE,
+    LEFTSHOULDER,
+    RIGHTSHOULDER,
+    LEFTELBOW,
+    RIGHTELBOW,
+    LEFTWRIST,
+    RIGHTWRIST,
+    LEFTKNEE,
+    RIGHTKNEE,
+    LEFTANKLE,
+    RIGHTANKLE,
+    COUNT // 17
+};
+
+struct Bones_t {
+    unsigned short list[COUNT];
 };
 
 struct CEntity_t {

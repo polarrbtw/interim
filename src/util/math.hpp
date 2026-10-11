@@ -7,6 +7,7 @@
 struct Vec4
 {
     float x = 0.0f, y = 0.0f, z = 0.0f, w = 0.0f;
+
     std::string toString() const {
         return "(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ", " + std::to_string(w) + ")";
     }
@@ -18,15 +19,6 @@ struct Vec3
 
     std::string ToString() const {
         return "(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")";
-    }
-    Vec3 operator-(const Vec3& other) const {
-        return { x - other.x, y - other.y, z - other.z };
-    }
-    float& operator[](int index) {
-        return (&x)[index];
-    }
-    const float& operator[](int index) const {
-        return (&x)[index];
     }
     void Normalize() {
         float length = std::sqrt(x * x + y * y + z * z);
@@ -45,6 +37,9 @@ struct Vec3
     float Length() const {
         return std::sqrt(x * x + y * y + z * z);
     }
+    Vec3 operator-(const Vec3& other) const {
+        return { x - other.x, y - other.y, z - other.z };
+    }
 };
 
 struct Vec2
@@ -54,17 +49,19 @@ struct Vec2
     std::string toString() const {
         return "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
     }
-
-    operator ImVec2() const {
-        return ImVec2(x, y);
+    Vec2 Midpoint(const Vec2 other) {
+        float xm = (x + other.x) / 2;
+        float ym = (y + other.y) / 2;
+        return { xm, ym };
     }
-
     Vec2 operator+(float scalar) const {
         return { x + scalar, y + scalar };
     }
-
     Vec2 operator-(float scalar) const {
         return { x - scalar, y - scalar };
+    }
+    operator ImVec2() const {
+        return ImVec2(x, y);
     }
 };
 

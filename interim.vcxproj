@@ -71,12 +71,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)build\</OutDir>
-    <IntDir>$(SolutionDir)build\obj\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)build\release\</OutDir>
+    <IntDir>$(SolutionDir)build\release\obj\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)build\</OutDir>
-    <IntDir>$(SolutionDir)build\obj\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)build\debug\</OutDir>
+    <IntDir>$(SolutionDir)build\debug\obj\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)build\x64\release\</OutDir>
+    <IntDir>$(SolutionDir)build\x64\release\obj\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)build\x64\debug\</OutDir>
+    <IntDir>$(SolutionDir)build\x64\debug\obj\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -179,7 +187,7 @@
     <ClCompile Include="ext\minhook\hde\hde32.c" />
     <ClCompile Include="ext\minhook\hde\hde64.c" />
     <ClCompile Include="src\features\esp.cpp" />
-    <ClCompile Include="src\hooks\functions.cpp" />
+    <ClCompile Include="src\hooks\engine.cpp" />
     <!-- Project Sources -->
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\hooks\hooks.cpp" />
@@ -209,7 +217,7 @@
     <ClInclude Include="src\common.hpp" />
     <ClInclude Include="src\features\esp.hpp" />
     <ClInclude Include="src\globals.hpp" />
-    <ClInclude Include="src\hooks\functions.hpp" />
+    <ClInclude Include="src\hooks\engine.hpp" />
     <ClInclude Include="src\hooks\hooks.hpp" />
     <ClInclude Include="src\render\gui.hpp" />
     <ClInclude Include="src\render\menu.hpp" />

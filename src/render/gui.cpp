@@ -114,8 +114,6 @@ void GUI::Setup() {
 
   DestroyWindow();
   DestroyWC();
-
-  //MessageBoxA(nullptr, "GUI has been setup", "dbg", MB_OK);
 }
 
 void GUI::SetupMenu(LPDIRECT3DDEVICE9 device) {
@@ -147,42 +145,46 @@ void GUI::Destroy() {
 }
 
 void GUI::RenderMenu() {
-    ImGui::Begin("Interim", &open);
+    ImGui::Begin("interim", &open);
     if (ImGui::Button("Unload")) { globals->Running = false; }
 
     ImGui::Checkbox("ESP", &Settings::ESP::Enabled);
     ImGui::Checkbox("Box", &Settings::ESP::Box);
     ImGui::Checkbox("Roccat ESP", &Settings::ESP::Roccat);
+    ImGui::Checkbox("Names", &Settings::ESP::Name);
+    ImGui::Checkbox("Bones", &Settings::ESP::Bone);
 
     ImGui::Checkbox("Ignore Dead", &Settings::ESP::IgnoreDead);
     ImGui::Checkbox("Ignore Team", &Settings::ESP::IgnoreTeam);
 
-    if (ImGui::Checkbox("Third Person", &Settings::CVAR::ThirdPerson)) {
-        if (Settings::CVAR::ThirdPerson)
-            mem.WriteDvar(cvars::cg_thirdperson, 1);
+    if (ImGui::Checkbox("Third Person", &Settings::Cvar::ThirdPerson)) {
+        if (Settings::Cvar::ThirdPerson)
+            Mem.WriteDvar(cvars::cg_thirdperson, 1);
         else
-            mem.WriteDvar(cvars::cg_thirdperson, 0);
+            Mem.WriteDvar(cvars::cg_thirdperson, 0);
     }
 
-    if (ImGui::Checkbox("No Smoke", &Settings::CVAR::NoSmoke)) {
-        if (Settings::CVAR::NoSmoke)
-            mem.WriteDvar(cvars::fx_draw, 0);
+    if (ImGui::Checkbox("No Smoke", &Settings::Cvar::NoSmoke)) {
+        if (Settings::Cvar::NoSmoke)
+            Mem.WriteDvar(cvars::fx_draw, 0);
         else
-            mem.WriteDvar(cvars::fx_draw, 1);
+            Mem.WriteDvar(cvars::fx_draw, 1);
     }
 
-    if (ImGui::Checkbox("No Jump Cooldown", &Settings::CVAR::NoJumpCooldown)) {
-        if (Settings::CVAR::NoJumpCooldown)
-            mem.WriteDvar(cvars::jump_slowdown, 0);
+    if (ImGui::Checkbox("No Jump Cooldown", &Settings::Cvar::NoJumpCooldown)) {
+        if (Settings::Cvar::NoJumpCooldown)
+            Mem.WriteDvar(cvars::jump_slowdown, 0);
         else
-            mem.WriteDvar(cvars::jump_slowdown, 1);
+            Mem.WriteDvar(cvars::jump_slowdown, 1);
     }
 
-    ImGui::Text("iw3mp base: 0x%X", mem.modBase);
-    ImGui::Text("cod4x base: 0x%X", mem.cod4xBase);
+    ImGui::Text("iw3mp.exe base: 0x%X", Mem.ModBase);
+    ImGui::Text("cod4x_021.dll base: 0x%X", Mem.Cod4xBase);
 
-    //ImGui::SliderFloat("Width", &Settings::Debug::width, 10.0f, 80.0f, "%.3f", 0);
-    //ImGui::SliderFloat("Height", &Settings::Debug::height, 50.0f, 125.0f, "%.3f", 0);
+#ifdef _DEBUG
+    ImGui::SliderFloat("Width", &Settings::Debug::Width, 10.0f, 80.0f, "%.3f", 0);
+    ImGui::SliderFloat("Height", &Settings::Debug::Height, 50.0f, 125.0f, "%.3f", 0);
+#endif
 
     ImGui::End();
 }

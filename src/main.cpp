@@ -1,12 +1,10 @@
 #include <windows.h>
 
 #include <hooks/hooks.hpp>
+#include <features/esp.hpp>
 #include <thread>
 
 #include <common.hpp>
-
-// features
-#include <features/esp.hpp>
 
 void CreateConsole() {
     AllocConsole();
@@ -32,19 +30,12 @@ void UpdateGlobals() {
     }
 }
 
-void RunESP() {
-    while (globals->Running) {
-        ESP::DrawPlayers();
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    }
-}
-
 void Setup(const HMODULE instance) {
     try {
         CreateConsole();
-        mem.Setup(); // for some reason this was never called??
+        Mem.Setup();
         GUI::Setup();
-        fn::Setup(); // actually initialize but wanted to keep it consistent
+        Engine::Setup(); // actually initialize but wanted to keep it consistent
         Hooks::Setup();
 
         std::thread(UpdateGlobals).detach();
@@ -72,12 +63,9 @@ BOOL WINAPI DllMain(const HMODULE instance, DWORD reason, LPVOID reserved) {
     if (reason == DLL_PROCESS_ATTACH) {
         DisableThreadLibraryCalls(instance);
 
-        const auto thread = CreateThread(
-            nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Setup), instance,
-            0, nullptr);
+        const auto thread = CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Setup), instance, 0, nullptr);
 
-        if (thread)
-            CloseHandle(thread);
+        if (thread) CloseHandle(thread);
     }
 
     return true;

@@ -75,7 +75,7 @@
     <ClCompile Include="src\util\math.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\hooks\functions.cpp">
+    <ClCompile Include="src\hooks\engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -167,7 +167,7 @@
     <ClInclude Include="src\settings.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\hooks\functions.hpp">
+    <ClInclude Include="src\hooks\engine.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

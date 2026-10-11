@@ -16,18 +16,23 @@ namespace offsets {
 	inline constexpr uintptr_t FOV = 0xC7AF1AC; // iw3mp.exe+C7AF1AC
 
 	// screenshotrequest in ida - 0x64E53EE0 ; image base - 0x64D00000
-	namespace fn {
-		inline constexpr uintptr_t CL_ParseSnapshot = 0x473710; // in iw3mp.exe
+	namespace engine {
+		inline constexpr uintptr_t CL_ParseSnapshot = 0x473710; // iw3mp.exe+73710
+		inline constexpr uintptr_t AimTarget_GetTagPos = 0x004024B0; // iw3mp.exe+3470 0x00403470
+		inline constexpr uintptr_t RegisterTag = 0x00518290; // iw3mp.exe+118290
+		inline constexpr uintptr_t Com_Error = 0x004FD330; // iw3mp.exe+FD330
+		//inline constexpr uintptr_t AimTarget_GetTagPos_AA = 0x004024B0;
+
 		inline constexpr uintptr_t ScreenshotRequest = 0x154010; // cod4x_021.dll+154010
 		inline constexpr uintptr_t CG_GetUsernameX = 0x42800; // cod4x_021.dll+0x42800
 		inline constexpr uintptr_t CG_GetClantag = 0x42810; // cod4x_021.dll+0x42810
 		inline constexpr uintptr_t Com_IsLegacyServer = 0x6CFF0; // cod4x_021.dll+0x6CFF0
-	}
+	} // namespace engine
 
-}
+} // namespace offset
 
 namespace cvars {
 	inline constexpr uintptr_t fx_draw = 0xC7C5E88; // iw3mp.exe+C7C5E88 <-- mem.write<BYTE>(fx_draw, 0) to turn it on, 1 for off
 	inline constexpr uintptr_t cg_thirdperson = 0xC7B828C; // iw3mp.exe+C7B828C
 	inline constexpr uintptr_t jump_slowdown = 0xC7BC4C0; // iw3mp.exe+C7BC4C0
-}
+} // namespace cvars
