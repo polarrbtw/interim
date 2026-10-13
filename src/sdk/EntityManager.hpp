@@ -12,5 +12,5 @@ public:
 
 private:
   inline static std::vector<Entity> EntityList{};
-  inline static LocalEntity LocalPlayer{}; // fix naming here
+  inline static LocalEntity LocalPlayer{};
 };

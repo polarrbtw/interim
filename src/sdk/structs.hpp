@@ -52,8 +52,8 @@ enum BONE : uint32_t {
     RIGHTWRIST,
     LEFTKNEE,
     RIGHTKNEE,
-    LEFTANKLE,
-    RIGHTANKLE,
+    LEFTFOOT,
+    RIGHTFOOT,
     COUNT // 17
 };
 

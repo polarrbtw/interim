@@ -9,7 +9,7 @@ namespace Engine {
 	const char* CG_GetClientName(int index);
 	const char* CG_GetClientClantag(int index);
 
-	Vec2 GetPlayerTag(WORD TagName, CEntity_t* Entity);
+	Vec2 GetPlayerTag(WORD TagName, CEntity_t* Entity, Vec3 Offset = { 0.0f, 0.0f, 0.0f });
 
 	void RegisterTags();
 } // namespace Engine

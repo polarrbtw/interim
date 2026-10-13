@@ -8,6 +8,7 @@
 #include <imgui_impl_win32.h>
 
 #include <features/esp.hpp>
+#include <common.hpp>
 
 void Hooks::Setup() {
 
@@ -88,14 +89,14 @@ void __cdecl Hooks::hk_ParseSnapshot(void* msg) {
 
 // needs testing
 int __cdecl Hooks::hk_ScreenshotRequest(int msg, int command) {
-    printf("[!] ScreenshotRequest ran");
+    info("ScreenshotRequest ran");
     globals->FrameCounter = 3;
 
     return oScreenshotRequest(msg, command);
 }
 
 void __cdecl Hooks::hk_ComError(int a1, char* Format, ...) {
-    printf("[*] Com_Error ran\n");
+    error("Com_Error ran");
 
     char buffer[0x1000u];
     va_list va; // [esp+20h] [ebp+10h] BYREF

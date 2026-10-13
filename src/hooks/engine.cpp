@@ -58,7 +58,8 @@ const char* Engine::CG_GetClientClantag(int index) {
 }
 
 // from moonbase
-Vec2 Engine::GetPlayerTag(WORD TagName, CEntity_t* Entity) {
+Vec2 Engine::GetPlayerTag(WORD TagName, CEntity_t* Entity, Vec3 Offset) {
+	// Offset param is optional, need it for Box ESP
 	int LocalClientNum{ 0 };
 	float* Position;
 	float _[3]{ 0.0f, 0.0f, 0.0f };
@@ -77,7 +78,7 @@ Vec2 Engine::GetPlayerTag(WORD TagName, CEntity_t* Entity) {
 	}
 
 	Vec2 screen{};
-	Vec3 tmp{ Position[0], Position[1], Position[2] };
+	Vec3 tmp{ Position[0] + Offset.x, Position[1] + Offset.y, Position[2] + Offset.z };
 	if (!WorldToScreen(tmp, screen)) return { 0.0f, 0.0f };
 	
 	return screen;
@@ -104,7 +105,7 @@ void Engine::RegisterTags() {
 		bones.list[i] = RegisterTag(boneNames[i], 1, (strlen(boneNames[i]) + 1));
 		if (!bones.list[i]) {
 			initialized = false;
-			info("bone: %s failed to initialize", bones.list[i]);
+			info("bone: %d failed to initialize", bones.list[i]);
 		}
 	}
 

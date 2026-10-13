@@ -72,11 +72,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)build\release\</OutDir>
-    <IntDir>$(SolutionDir)build\release\obj\$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)build\release\intermediates\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)build\debug\</OutDir>
-    <IntDir>$(SolutionDir)build\debug\obj\$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)build\debug\intermediates\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_dbg</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)build\x64\release\</OutDir>
@@ -120,7 +121,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalDependencies>d3d9.lib;dwmapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>

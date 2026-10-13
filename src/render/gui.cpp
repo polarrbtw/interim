@@ -35,8 +35,7 @@ bool GUI::SetupWC(const char *wcName) {
 void GUI::DestroyWC() { UnregisterClass(wc.lpszClassName, wc.hInstance); }
 
 bool GUI::SetupWindow(const char *wndName) {
-  hwnd = CreateWindow(wc.lpszClassName, wndName, WS_OVERLAPPEDWINDOW, 0, 0, 50,
-                      50, nullptr, nullptr, wc.hInstance, nullptr);
+  hwnd = CreateWindow(wc.lpszClassName, wndName, WS_OVERLAPPEDWINDOW, 0, 0, 50, 50, nullptr, nullptr, wc.hInstance, nullptr);
   if (!hwnd)
     return false;
 
@@ -81,10 +80,7 @@ bool GUI::SetupDirectX() {
   p.FullScreen_RefreshRateInHz = 0;
   p.PresentationInterval = 0;
 
-  if (d3d9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_NULLREF, hwnd,
-                         D3DCREATE_SOFTWARE_VERTEXPROCESSING |
-                             D3DCREATE_DISABLE_DRIVER_MANAGEMENT,
-                         &p, &device) < 0)
+  if (d3d9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_NULLREF, hwnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_DISABLE_DRIVER_MANAGEMENT, &p, &device) < 0)
     return false;
 
   return true;
@@ -122,8 +118,7 @@ void GUI::SetupMenu(LPDIRECT3DDEVICE9 device) {
 
   hwnd = p.hFocusWindow;
 
-  oWindowProc = reinterpret_cast<WNDPROC>(SetWindowLongPtr(
-      hwnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(WindowProc)));
+  oWindowProc = reinterpret_cast<WNDPROC>(SetWindowLongPtr(hwnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(WindowProc)));
 
   ImGui::CreateContext();
   ImGui::StyleColorsDark();
@@ -149,10 +144,10 @@ void GUI::RenderMenu() {
     if (ImGui::Button("Unload")) { globals->Running = false; }
 
     ImGui::Checkbox("ESP", &Settings::ESP::Enabled);
-    ImGui::Checkbox("Box", &Settings::ESP::Box);
-    ImGui::Checkbox("Roccat ESP", &Settings::ESP::Roccat);
+    ImGui::Checkbox("Boxes", &Settings::ESP::Box);
+    ImGui::Checkbox("Skeleton", &Settings::ESP::Bone);
     ImGui::Checkbox("Names", &Settings::ESP::Name);
-    ImGui::Checkbox("Bones", &Settings::ESP::Bone);
+    ImGui::Checkbox("Distance", &Settings::ESP::Distance);
 
     ImGui::Checkbox("Ignore Dead", &Settings::ESP::IgnoreDead);
     ImGui::Checkbox("Ignore Team", &Settings::ESP::IgnoreTeam);
@@ -184,6 +179,9 @@ void GUI::RenderMenu() {
 #ifdef _DEBUG
     ImGui::SliderFloat("Width", &Settings::Debug::Width, 10.0f, 80.0f, "%.3f", 0);
     ImGui::SliderFloat("Height", &Settings::Debug::Height, 50.0f, 125.0f, "%.3f", 0);
+
+    // rendering thread might be fried
+    ImGui::ShowMetricsWindow();
 #endif
 
     ImGui::End();
@@ -198,6 +196,5 @@ LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wideParam, LPARAM 
       ImGui_ImplWin32_WndProcHandler(window, message, wideParam, longParam))
     return 1L;
 
-  return CallWindowProc(GUI::oWindowProc, window, message, wideParam,
-                        longParam);
+  return CallWindowProc(GUI::oWindowProc, window, message, wideParam, longParam);
 }

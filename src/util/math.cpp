@@ -17,7 +17,7 @@ bool WorldToScreen(const Vec3& in, Vec2& out)
     TransForm.y = (Local.x * Up.x + Local.y * Up.y + Local.z * Up.z);
     TransForm.z = (Local.x * Forward.x + Local.y * Forward.y + Local.z * Forward.z);
 
-    if (TransForm.z < 1.0f)
+    if (TransForm.z < 0.01f)
         return false;
 
     out.x = ScreenCenterX * (1.0f - (TransForm.x / globals->Refdef.FovX / TransForm.z));
