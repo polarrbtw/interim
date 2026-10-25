@@ -13,13 +13,12 @@ public:
 	bool IsInGame{ false };
 	bool Running{ true };
 
-	Refdef_t Refdef{};
-
+	// this function sleeps every time for 20ms
 	void Update() {
-		WindowHeight = Mem.raw<int>(offsets::ScreenHeight);
-		WindowWidth = Mem.raw<int>(offsets::ScreenWidth);
-		IsInGame = Mem.raw<bool>(offsets::IsInGame);
-		Refdef = Mem.raw<Refdef_t>(offsets::Refdef);
+		WindowHeight = Mem.Raw<int>(offsets::ScreenHeight);
+		WindowWidth = Mem.Raw<int>(offsets::ScreenWidth);
+		IsInGame = Mem.Raw<bool>(offsets::IsInGame);
+		// removed refdef
 	}
 };
 

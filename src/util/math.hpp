@@ -20,6 +20,9 @@ struct Vec3
     std::string ToString() const {
         return "(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")";
     }
+    bool IsZero() {
+        return x == 0.0f && y == 0.0f && z == 0.0f;
+    }
     void Normalize() {
         float length = std::sqrt(x * x + y * y + z * z);
         if (length != 0.0f) {
@@ -52,10 +55,18 @@ struct Vec2
     std::string toString() const {
         return "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
     }
+    bool IsZero() {
+        return x == 0.0f && y == 0.0f;
+    }
     Vec2 Midpoint(const Vec2 other) {
         float xm = (x + other.x) / 2;
         float ym = (y + other.y) / 2;
         return { xm, ym };
+    }
+    float Distance(const Vec2& other) const {
+        float dx = other.x - x;
+        float dy = other.y - y;
+        return std::sqrt(dx * dx + dy * dy);
     }
     Vec2 operator+(float scalar) const {
         return { x + scalar, y + scalar };
@@ -73,3 +84,4 @@ using Vector3 = Vec3;
 using Vector2 = Vec2;
 
 bool WorldToScreen(const Vec3& in, Vec2& out);
+Vec2 GetScreenCenter();

@@ -1,0 +1,6 @@
+[submodule "ext/imgui"]
+	path = ext/imgui
+	url = https://github.com/ocornut/imgui.git
+[submodule "ext/minhook"]
+	path = ext/minhook
+	url = https://github.com/TsudaKageyu/minhook.git

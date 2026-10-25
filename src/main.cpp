@@ -1,3 +1,5 @@
+#include "features/aimbot.hpp"
+#include "render/gui.hpp"
 #include <windows.h>
 
 #include <hooks/hooks.hpp>
@@ -5,6 +7,64 @@
 #include <thread>
 
 #include <common.hpp>
+
+// util
+void CreateConsole();
+void DestroyConsole();
+
+// threads
+void UpdateGlobals();
+void AimbotThread();
+
+// initialization and unloading
+[[noreturn]] void Unload(const HMODULE instance) {
+    globals->Running = false;
+    if (Hooks::initialized)
+        Hooks::Destroy();
+    if (GUI::initialized)
+        GUI::Destroy();
+
+    DestroyConsole();
+    FreeLibraryAndExitThread(instance, 0);
+}
+
+void Setup(const HMODULE instance) {
+    try {
+        CreateConsole();
+        Mem.Setup();
+        GUI::Setup();
+        Engine::Setup(); // actually initialize but wanted to keep it consistent
+        Hooks::Setup();
+
+        // start threads
+        std::thread(UpdateGlobals).detach();
+        std::thread(AimbotThread).detach();
+    }
+    catch (const std::exception& err) {
+        MessageBeep(MB_ICONERROR);
+        MessageBox(nullptr, err.what(), "interim", MB_OK | MB_ICONEXCLAMATION);
+
+        Unload(instance);
+    }
+
+    while (!GetAsyncKeyState(VK_END) && globals->Running) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    }
+
+    Unload(instance);
+}
+
+BOOL WINAPI DllMain(const HMODULE instance, DWORD reason, LPVOID reserved) {
+    if (reason == DLL_PROCESS_ATTACH) {
+        DisableThreadLibraryCalls(instance);
+
+        const auto thread = CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Setup), instance, 0, nullptr);
+
+        if (thread) CloseHandle(thread);
+    }
+
+    return true;
+}
 
 void CreateConsole() {
     AllocConsole();
@@ -30,43 +90,10 @@ void UpdateGlobals() {
     }
 }
 
-void Setup(const HMODULE instance) {
-    try {
-        CreateConsole();
-        Mem.Setup();
-        GUI::Setup();
-        Engine::Setup(); // actually initialize but wanted to keep it consistent
-        Hooks::Setup();
+void AimbotThread() {
+    while (globals->Running) {
+        Aimbot::RunAimbot();
 
-        std::thread(UpdateGlobals).detach();
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
-    catch (const std::exception& err) {
-        MessageBeep(MB_ICONERROR);
-        MessageBox(nullptr, err.what(), "interim", MB_OK | MB_ICONEXCLAMATION);
-
-        goto UNLOAD;
-    }
-
-    while (!GetAsyncKeyState(VK_END) && globals->Running)
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
-
-UNLOAD:
-    globals->Running = false;
-    Hooks::Destroy();
-    GUI::Destroy();
-    DestroyConsole();
-
-    FreeLibraryAndExitThread(instance, 0);
-}
-
-BOOL WINAPI DllMain(const HMODULE instance, DWORD reason, LPVOID reserved) {
-    if (reason == DLL_PROCESS_ATTACH) {
-        DisableThreadLibraryCalls(instance);
-
-        const auto thread = CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Setup), instance, 0, nullptr);
-
-        if (thread) CloseHandle(thread);
-    }
-
-    return true;
 }

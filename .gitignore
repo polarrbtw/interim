@@ -4,6 +4,12 @@
 # Visual Studio
 .vs/
 
+# Clangd
+.clangd
+
+# Zed Editor
+.zed/
+
 # Compiled Object files
 *.slo
 *.lo
@@ -19,16 +25,6 @@
 
 # Debugger Files
 *.pdb
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-*.so.*
-
-# Fortran module files
-*.mod
-*.smod
 
 # Compiled Static libraries
 *.lai
@@ -50,7 +46,6 @@ build-*/
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
-Makefile
 install_manifest.txt
 compile_commands.json
 

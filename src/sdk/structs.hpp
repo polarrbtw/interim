@@ -61,6 +61,11 @@ struct Bones_t {
     unsigned short list[COUNT];
 };
 
+struct ViewAngles_t {
+    float yaw;
+    float pitch;
+};
+
 struct CEntity_t {
     char pad_0000[2]; //0x0000
     bool IsValidEntity; //0x0002
@@ -107,6 +112,7 @@ struct ClientInfo_t {
 static_assert(sizeof(ClientInfo_t) == 0x4CC);
 
 // ViewAxis needed for W2S
+// haven't used refdefViewAngles yet so I'm removing it but keeping the struct incase I need it
 struct Refdef_t {
     uint32_t x; //0x0000
     uint32_t y; //0x0004
@@ -116,12 +122,13 @@ struct Refdef_t {
     float FovY; //0x0014
     Vector3 ViewOrigin; //0x0018
     Vector3 ViewAxis[3]; //0x0024
-    char unknown142[0x4050]; // 0x0048
-    Vector3	refdefViewAngles; // 0x4098
-}; //Size: 0x40A4
-static_assert(sizeof(Refdef_t) == 0x40A4);
+    //char unknown142[0x4050]; // 0x0048
+    //Vector3	refdefViewAngles; // 0x4098
+}; //New Size: 0x48
+//Old Size: 0x40A4
+static_assert(sizeof(Refdef_t) == 0x48);
 
-struct Camera {
+struct Camera_t {
     char pad_0000[24]; //0x0000
     char MapName[16]; //0x0018
     char pad_0028[100]; //0x0028
@@ -131,4 +138,4 @@ struct Camera {
     char pad_00B0[12]; //0x00B0
     Vector2 ViewAngles; //0x00BC
 }; //Size: 0x00C4
-static_assert(sizeof(Camera) == 0xC4);
+static_assert(sizeof(Camera_t) == 0xC4);

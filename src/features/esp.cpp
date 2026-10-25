@@ -1,4 +1,5 @@
 #include "esp.hpp"
+#include "settings.hpp"
 #include <common.hpp>
 #include <sdk/EntityManager.hpp>
 
@@ -11,8 +12,10 @@
 #include <chrono>
 
 namespace {
-	void ConnectBone(ImDrawList* draw, ImVec2 bone1, ImVec2 bone2) {
-		draw->AddLine(bone1, bone2, WHITE, 1.0f);
+	void ConnectBone(ImDrawList* draw, Vec2 bone1, Vec2 bone2) {
+	    if (bone1.IsZero() || bone2.IsZero()) return;
+
+		draw->AddLine(bone1, bone2, ToU32(Settings::ESP::BoneColor), 1.0f);
 	}
 }
 
@@ -20,29 +23,27 @@ void ESP::DrawPlayers() {
 	if (!globals->Running) return;
 	if (!Settings::ESP::Enabled) return;
 
-	std::vector<Entity> EntityList = EntityManager::GetEntities();
+	const auto& EntityList = EntityManager::GetEntities();
 	if (EntityList.empty()) { return; }
 
 	auto* LocalPlayer = EntityManager::GetLocalPlayer();
-	if (!LocalPlayer) return;
+	if (!LocalPlayer || !LocalPlayer->CEntity) return;
 
 	for (const auto& Entity : EntityList) {
-		if (Entity.GetIndex() == LocalPlayer->GetIndex()) continue;
-		if (!Entity.IsValid()) continue; 
+		if (Entity.Index == LocalPlayer->Index) continue;
+		if (!Entity.IsValid()) continue;
 
 		Vec2 Position{};
-		if (!WorldToScreen(Entity.GetPosition(), Position)) continue;
+		if (!WorldToScreen(Entity.CEntity->Position, Position)) continue;
 
 		if (Settings::ESP::IgnoreDead && !Entity.IsAlive()) continue;
-		if (Settings::ESP::IgnoreTeam && Entity.GetTeam() == LocalPlayer->GetTeam()) continue;
+		if (Settings::ESP::IgnoreTeam && Entity.ClientInfo->Team == LocalPlayer->ClientInfo->Team) continue;
 
 		ImDrawList* draw = ImGui::GetBackgroundDrawList();
 
-		CEntity_t* cent = reinterpret_cast<CEntity_t*>(offsets::CEntity + (Entity.GetIndex() * sizeof(CEntity_t)));
+		float Distance = LocalPlayer->CEntity->Position.Distance(Entity.CEntity->Position);
 
-		float Distance = LocalPlayer->GetPosition().Distance(Entity.GetPosition());
-
-		// prevent it from getting too big
+		// prevent boxes from getting too big
 		// if you're too close
 		if (Distance < 1.0f) Distance = 1.0f;
 
@@ -53,8 +54,10 @@ void ESP::DrawPlayers() {
 
 		if (Settings::ESP::Box) {
 			// p_min - top left ; p_max - bottom right
-			Vec2 Head = Engine::GetPlayerTag(bones.list[HEAD], cent, { 0.0f, 0.0f, 11.0f });
-			Vec2 Foot = Engine::GetPlayerTag(bones.list[LEFTFOOT], cent, { 0.0f, 0.0f, -8.0f });
+			Vec2 Head = Engine::GetPlayerTag(bones.list[HEAD], Entity.CEntity, { 0.0f, 0.0f, 11.0f });
+			Vec2 Foot = Engine::GetPlayerTag(bones.list[LEFTFOOT], Entity.CEntity, { 0.0f, 0.0f, -8.0f });
+
+			if (Head.IsZero() || Foot.IsZero()) continue;
 
 			// bounding box
 			float BoxHeight = abs(Head.y - Foot.y);
@@ -64,36 +67,37 @@ void ESP::DrawPlayers() {
 			Vec2 BottomRight = { Head.x + (BoxWidth / 2.0f), Foot.y };
 
 			// stroke
-			draw->AddRect({ TopLeft.x - 1.0f, TopLeft.y - 1.0f }, { BottomRight.x + 1.0f, BottomRight.y + 1.0f }, BLACK, 0.0f, 0, 2.0f);
+			draw->AddRect({ TopLeft.x - 1.0f, TopLeft.y - 1.0f }, { BottomRight.x + 1.0f, BottomRight.y + 1.0f }, ToU32(Settings::ESP::StrokeColor), 0.0f, 0, 2.0f);
 			// box
-			draw->AddRect(TopLeft, BottomRight, WHITE, 0.0f, 0, 1.5f);
+			draw->AddRect(TopLeft, BottomRight, ToU32(Settings::ESP::BoxColor), 0.0f, 0, 1.5f);
 		}
 
 		if (Settings::ESP::Bone) {
-			if (!cent || !cent->IsValidEntity) {
+			if (!Entity.CEntity || !Entity.CEntity->IsValidEntity) {
 				continue;
 			}
 
 			// upper
-			Vec2 Head = Engine::GetPlayerTag(bones.list[HEAD], cent);
-			Vec2 Neck = Engine::GetPlayerTag(bones.list[NECK], cent);
-			Vec2 Spine = Engine::GetPlayerTag(bones.list[SPINE], cent);
+			Vec2 Head = Engine::GetPlayerTag(bones.list[HEAD], Entity.CEntity);
+			Vec2 Neck = Engine::GetPlayerTag(bones.list[NECK], Entity.CEntity);
+			Vec2 Spine = Engine::GetPlayerTag(bones.list[SPINE], Entity.CEntity);
 
 			// arms
-			Vec2 LeftClavicle = Engine::GetPlayerTag(bones.list[LEFTCLAVICLE], cent);
-			Vec2 LeftElbow = Engine::GetPlayerTag(bones.list[LEFTELBOW], cent);
-			Vec2 LeftWrist = Engine::GetPlayerTag(bones.list[LEFTWRIST], cent);
-			Vec2 RightClavicle = Engine::GetPlayerTag(bones.list[RIGHTCLAVICLE], cent);
-			Vec2 RightElbow = Engine::GetPlayerTag(bones.list[RIGHTELBOW], cent);
-			Vec2 RightWrist = Engine::GetPlayerTag(bones.list[RIGHTWRIST], cent);
-			
-			// lower
-			Vec2 Pelvis = Engine::GetPlayerTag(bones.list[PELVIS], cent);
-			Vec2 LeftFoot = Engine::GetPlayerTag(bones.list[LEFTFOOT], cent);
-			Vec2 LeftKnee = Engine::GetPlayerTag(bones.list[LEFTKNEE], cent);
-			Vec2 RightFoot = Engine::GetPlayerTag(bones.list[RIGHTFOOT], cent);
-			Vec2 RightKnee = Engine::GetPlayerTag(bones.list[RIGHTKNEE], cent);
+			Vec2 LeftClavicle = Engine::GetPlayerTag(bones.list[LEFTCLAVICLE], Entity.CEntity);
+			Vec2 LeftElbow = Engine::GetPlayerTag(bones.list[LEFTELBOW], Entity.CEntity);
+			Vec2 LeftWrist = Engine::GetPlayerTag(bones.list[LEFTWRIST], Entity.CEntity);
+			Vec2 RightClavicle = Engine::GetPlayerTag(bones.list[RIGHTCLAVICLE], Entity.CEntity);
+			Vec2 RightElbow = Engine::GetPlayerTag(bones.list[RIGHTELBOW], Entity.CEntity);
+			Vec2 RightWrist = Engine::GetPlayerTag(bones.list[RIGHTWRIST], Entity.CEntity);
 
+			// lower
+			Vec2 Pelvis = Engine::GetPlayerTag(bones.list[PELVIS], Entity.CEntity);
+			Vec2 LeftFoot = Engine::GetPlayerTag(bones.list[LEFTFOOT], Entity.CEntity);
+			Vec2 LeftKnee = Engine::GetPlayerTag(bones.list[LEFTKNEE], Entity.CEntity);
+			Vec2 RightFoot = Engine::GetPlayerTag(bones.list[RIGHTFOOT], Entity.CEntity);
+			Vec2 RightKnee = Engine::GetPlayerTag(bones.list[RIGHTKNEE], Entity.CEntity);
+
+			// draw bones
 			ConnectBone(draw, Head, Neck);
 			ConnectBone(draw, Neck, Spine);
 			ConnectBone(draw, Spine, LeftClavicle);
@@ -111,9 +115,9 @@ void ESP::DrawPlayers() {
 		}
 
 		if (Settings::ESP::Name) {
-			const char* Name = Entity.GetName();
-			Vec2 LeftFoot = Engine::GetPlayerTag(bones.list[LEFTFOOT], cent);
-			Vec2 RightFoot = Engine::GetPlayerTag(bones.list[RIGHTFOOT], cent);
+			const char* Name = Entity.Name;
+			Vec2 LeftFoot = Engine::GetPlayerTag(bones.list[LEFTFOOT], Entity.CEntity);
+			Vec2 RightFoot = Engine::GetPlayerTag(bones.list[RIGHTFOOT], Entity.CEntity);
 
 			Vec2 Midpoint = LeftFoot.Midpoint(RightFoot);
 
@@ -121,19 +125,20 @@ void ESP::DrawPlayers() {
 			Vec2 CenteredText = { Midpoint.x - (TextSize.x * 0.5f), Midpoint.y }; // without * 0.5f it goes too much to the left
 
 			// stroke
-			draw->AddText({ CenteredText.x + 1.0f, CenteredText.y - 1.0f}, BLACK, Name);
-			draw->AddText({ CenteredText.x - 1.0f, CenteredText.y + 1.0f }, BLACK, Name);
+			draw->AddText({ CenteredText.x + 1.0f, CenteredText.y - 1.0f}, ToU32(Settings::ESP::StrokeColor), Name);
+			draw->AddText({ CenteredText.x - 1.0f, CenteredText.y + 1.0f }, ToU32(Settings::ESP::StrokeColor), Name);
 
 			// name
-			draw->AddText(CenteredText, WHITE, Name);
+			draw->AddText(CenteredText, ToU32(Settings::ESP::NameColor), Name);
 		}
 
 		if (Settings::ESP::Distance) {
+		    // convert float to string
 			char PlayerDistance[64]{};
-			int _ = snprintf(PlayerDistance, sizeof(PlayerDistance), "%.0fm", Distance / 40.0f);
+			int _ = snprintf(PlayerDistance, sizeof(PlayerDistance), "%.0fm", Distance / 40.0f); // meter suffix; should be divided by ~38 but its rounded to 40
 
-			Vec2 LeftFoot = Engine::GetPlayerTag(bones.list[LEFTFOOT], cent);
-			Vec2 RightFoot = Engine::GetPlayerTag(bones.list[RIGHTFOOT], cent);
+			Vec2 LeftFoot = Engine::GetPlayerTag(bones.list[LEFTFOOT], Entity.CEntity);
+			Vec2 RightFoot = Engine::GetPlayerTag(bones.list[RIGHTFOOT], Entity.CEntity);
 
 			Vec2 Midpoint = LeftFoot.Midpoint(RightFoot);
 
@@ -145,13 +150,13 @@ void ESP::DrawPlayers() {
 			else {
 				CenteredText = { Midpoint.x - (TextSize.x * 0.5f), Midpoint.y };
 			}
-			
+
 			// stroke
-			draw->AddText({ CenteredText.x + 1.0f, CenteredText.y - 1.0f }, BLACK, PlayerDistance);
-			draw->AddText({ CenteredText.x - 1.0f, CenteredText.y + 1.0f }, BLACK, PlayerDistance);
+			draw->AddText({ CenteredText.x + 1.0f, CenteredText.y - 1.0f }, ToU32(Settings::ESP::StrokeColor), PlayerDistance);
+			draw->AddText({ CenteredText.x - 1.0f, CenteredText.y + 1.0f }, ToU32(Settings::ESP::StrokeColor), PlayerDistance);
 
 			// distance
-			draw->AddText(CenteredText, WHITE, PlayerDistance);
+			draw->AddText(CenteredText, ToU32(Settings::ESP::DistanceColor), PlayerDistance);
 		}
 	}
 }

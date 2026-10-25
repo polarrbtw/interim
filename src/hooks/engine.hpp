@@ -9,9 +9,13 @@ namespace Engine {
 	const char* CG_GetClientName(int index);
 	const char* CG_GetClientClantag(int index);
 
-	Vec2 GetPlayerTag(WORD TagName, CEntity_t* Entity, Vec3 Offset = { 0.0f, 0.0f, 0.0f });
+	// offset parameters are optional
+	Vec3 GetTagPosition(WORD TagName, CEntity_t* CEntity, Vec3 Offset = {});
+	// calls GetTagPosition and returns whatever WorldToScreen returns
+	Vec2 GetPlayerTag(WORD TagName, CEntity_t* CEntity, Vec3 Offset = {});
 
-	void RegisterTags();
+	bool GetClosestEnemy(Entity& out);
+	bool GetClosestEnemyFOV(Entity& out, int MaxDistance);
 } // namespace Engine
 
 using oCG_GetUsernameX = char* (*)(int clnum);

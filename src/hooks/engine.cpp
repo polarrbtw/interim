@@ -1,12 +1,14 @@
 #include "engine.hpp"
 #include <globals.hpp>
 #include <common.hpp>
+#include <sdk/EntityManager.hpp>
 
 oCG_GetUsernameX CG_GetUsernameX{ nullptr };
 oCG_GetClantag CG_GetClantag{ nullptr };
 oCom_IsLegacyServer Com_IsLegacyServer{ nullptr };
 oRegisterTag RegisterTag{ nullptr };
 
+// no need to have these functions in other files
 namespace {
 	void RemoveColorCodes(char* name) {
 		for (size_t i = 0; name[i] != 0; ++i) {
@@ -16,7 +18,40 @@ namespace {
 			}
 		}
 	}
-} // namespace 
+
+	void RegisterTags() {
+		const char* BoneNames[] = {
+		"j_helmet",
+		"j_head",
+		"neck",
+		"j_spine4",
+		"pelvis",
+		"j_clavicle_le", "j_clavicle_ri",
+		"j_shoulder_le", "j_shoulder_ri",
+		"j_elbow_le", "j_elbow_ri",
+		"j_wrist_le", "j_wrist_ri",
+		"j_knee_le", "j_knee_ri",
+		"j_ankle_le", "j_ankle_ri"
+		};
+
+		bool initialized{ true };
+
+		for (size_t i = 0; i < BONE::COUNT; ++i) {
+			bones.list[i] = RegisterTag(BoneNames[i], 1, (strlen(BoneNames[i]) + 1));
+			if (!bones.list[i]) {
+				initialized = false;
+				info("bone: %d failed to initialize", bones.list[i]);
+			}
+		}
+
+		if (initialized) {
+			info("bone tags initialized");
+		}
+		else {
+			error("bone tags failed to initialize");
+		}
+	}
+} // namespace
 
 void Engine::Setup() {
 	CG_GetUsernameX = (oCG_GetUsernameX)(Mem.Cod4xBase + offsets::engine::CG_GetUsernameX);
@@ -31,11 +66,11 @@ void Engine::Setup() {
 }
 
 const char* Engine::CG_GetClientName(int index) {
-	int valid = *(unsigned long*)(0x4CC * index + 0x839270); // if ( *(_DWORD *)(0x4CC * i + 0x839270)
+	unsigned long valid = *reinterpret_cast<unsigned long*>(0x4CC * index + 0x839270); // if ( *(_DWORD *)(0x4CC * i + 0x839270)
 	if (!valid) return "invalid";
 
 	if (Com_IsLegacyServer()) {
-		char* name = (char*)(0x4CC * index + 0x83927C); //name = (char *)(0x4CC * i + 0x83927C);
+		char* name = reinterpret_cast<char*>(0x4CC * index + 0x83927C); //name = (char *)(0x4CC * i + 0x83927C);
 		RemoveColorCodes(name);
 		return name;
 	}
@@ -47,10 +82,10 @@ const char* Engine::CG_GetClientName(int index) {
 }
 
 const char* Engine::CG_GetClientClantag(int index) {
-	if (Com_IsLegacyServer()) { 
-		return "";  // legacy servers dont have clan tags 
+	if (Com_IsLegacyServer()) {
+		return "";  // legacy servers dont have clan tags
 	}
-	else { 
+	else {
 		char* clantag = CG_GetClantag(index);
 		RemoveColorCodes(clantag);
 		return clantag;
@@ -58,8 +93,8 @@ const char* Engine::CG_GetClientClantag(int index) {
 }
 
 // from moonbase
-Vec2 Engine::GetPlayerTag(WORD TagName, CEntity_t* Entity, Vec3 Offset) {
-	// Offset param is optional, need it for Box ESP
+Vec3 Engine::GetTagPosition(WORD TagName, CEntity_t* CEntity, Vec3 Offset) {
+   	// offset param is optional, need it for Box ESP
 	int LocalClientNum{ 0 };
 	float* Position;
 	float _[3]{ 0.0f, 0.0f, 0.0f };
@@ -69,7 +104,7 @@ Vec2 Engine::GetPlayerTag(WORD TagName, CEntity_t* Entity, Vec3 Offset) {
 	{
 		push	Position
 		movzx	esi, TagName
-		mov		ecx, Entity
+		mov		ecx, CEntity
 		movzx	eax, byte ptr[ecx + 4]
 		mov		edi, 0x004024B0
 		call	edi
@@ -77,42 +112,76 @@ Vec2 Engine::GetPlayerTag(WORD TagName, CEntity_t* Entity, Vec3 Offset) {
 		mov		LocalClientNum, eax
 	}
 
-	Vec2 screen{};
-	Vec3 tmp{ Position[0] + Offset.x, Position[1] + Offset.y, Position[2] + Offset.z };
-	if (!WorldToScreen(tmp, screen)) return { 0.0f, 0.0f };
-	
-	return screen;
+	return { Position[0] + Offset.x, Position[1] + Offset.y, Position[2] + Offset.z };
 }
 
-void Engine::RegisterTags() {
-	const char* boneNames[] = {
-	"j_helmet",
-	"j_head",
-	"neck",
-	"j_spine4",
-	"pelvis",
-	"j_clavicle_le", "j_clavicle_ri",
-	"j_shoulder_le", "j_shoulder_ri",
-	"j_elbow_le", "j_elbow_ri",
-	"j_wrist_le", "j_wrist_ri",
-	"j_knee_le", "j_knee_ri",
-	"j_ankle_le", "j_ankle_ri"
-	};
+Vec2 Engine::GetPlayerTag(WORD TagName, CEntity_t* CEntity, Vec3 Offset) {
+	Vec2 Screen{};
+	Vec3 Position = GetTagPosition(TagName, CEntity, Offset);
 
-	bool initialized{ true };
+	if (!WorldToScreen(Position, Screen)) return { 0.0f, 0.0f };
 
-	for (size_t i = 0; i < BONE::COUNT; ++i) {
-		bones.list[i] = RegisterTag(boneNames[i], 1, (strlen(boneNames[i]) + 1));
-		if (!bones.list[i]) {
-			initialized = false;
-			info("bone: %d failed to initialize", bones.list[i]);
+	return Screen;
+}
+
+bool Engine::GetClosestEnemy(Entity& out) {
+	std::vector<Entity> EntityList = EntityManager::GetEntities();
+	if (EntityList.empty()) return false;
+
+	auto LocalPlayer = EntityManager::GetLocalPlayer();
+	if (!LocalPlayer || !LocalPlayer->CEntity || !LocalPlayer->IsValid()) return false;
+
+	Entity Closest{};
+	float ClosestDistance = FLT_MAX;
+
+	for (const auto& Entity : EntityList) {
+		if (!Entity.IsValid() || !Entity.IsAlive()) continue;
+		if (Entity.ClientInfo->Team == LocalPlayer->ClientInfo->Team) continue;
+
+		float Distance = LocalPlayer->CEntity->Position.Distance(Entity.CEntity->Position);
+
+		if (Distance < ClosestDistance) {
+			ClosestDistance = Distance;
+			Closest = Entity;
 		}
 	}
 
-	if (initialized) {
-		info("bone tags initialized");
+	if (!Closest.CEntity) return false;
+	out = Closest;
+	return true;
+}
+
+bool Engine::GetClosestEnemyFOV(Entity& out, int MaxDistance) {
+    std::vector<Entity> EntityList = EntityManager::GetEntities();
+	if (EntityList.empty()) return false;
+
+	auto LocalPlayer = EntityManager::GetLocalPlayer();
+	if (!LocalPlayer || !LocalPlayer->CEntity || !LocalPlayer->IsValid()) return false;
+
+	Entity Closest{};
+	float ClosestDistance = FLT_MAX;
+
+	Vec2 ScreenCenter = GetScreenCenter();
+
+	for (const auto& Entity : EntityList) {
+		if (!Entity.IsValid() || !Entity.IsAlive()) continue;
+		if (Entity.ClientInfo->Team == LocalPlayer->ClientInfo->Team) continue;
+
+		CEntity_t* CEntity = Entity.CEntity;
+		Vec2 HeadPosition = Engine::GetPlayerTag(bones.list[HEAD], CEntity);
+		if (HeadPosition.IsZero()) continue;
+
+		float Distance = ScreenCenter.Distance(HeadPosition);
+		if (Distance > Settings::Aimbot::FOV) continue;
+		if (Distance > MaxDistance) continue;
+
+		if (Distance < ClosestDistance) {
+			ClosestDistance = Distance;
+			Closest = Entity;
+		}
 	}
-	else {
-		error("bone tags failed to initialize");
-	}
+
+	if (!Closest.CEntity) return false;
+	out = Closest;
+	return true;
 }

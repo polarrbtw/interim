@@ -11,35 +11,41 @@ void EntityManager::UpdateEntities() {
 
 	EntityManager::EntityList.clear();
 	for (int index = 0; index <= SV_MAXCLIENTS; ++index) {
-		CEntity_t cent = Mem.raw<CEntity_t>(offsets::CEntity + index * sizeof(CEntity_t));
-		ClientInfo_t cinfo = Mem.raw<ClientInfo_t>(offsets::ClientInfo + index * sizeof(ClientInfo_t));
-		
+		CEntity_t* cent = Mem.Ptr<CEntity_t*>(offsets::CEntity + index * sizeof(CEntity_t));
+		ClientInfo_t* cinfo = Mem.Ptr<ClientInfo_t*>(offsets::ClientInfo + index * sizeof(ClientInfo_t));
+
 		Entity entity{};
-		const char* name = Engine::CG_GetClientName(index);
-		const char* clantag = Engine::CG_GetClientClantag(index);
-		entity.SetInfo(cent, cinfo, name, clantag, index);
+		entity.CEntity = cent;
+		entity.ClientInfo = cinfo;
+		entity.Index = index;
+		entity.Name = Engine::CG_GetClientName(index);
+		entity.Clantag = Engine::CG_GetClientClantag(index);
 
 		if (!entity.IsValid()) continue;
-		if (entity.GetIndex() == EntityManager::GetLocalPlayer()->GetIndex()) continue;
+		if (entity.Index == EntityManager::GetLocalPlayer()->Index) continue;
 
 		EntityManager::EntityList.push_back(entity);
 	}
 }
 
 void EntityManager::UpdateLocalPlayer() {
-	int index = Mem.raw<int>(offsets::CG); // localplayer index
+	int index = Mem.Raw<int>(offsets::CG); // localplayer index
 
-	CEntity_t cent = Mem.raw<CEntity_t>(offsets::CEntity + index * sizeof(CEntity_t));
-	ClientInfo_t cinfo = Mem.raw<ClientInfo_t>(offsets::ClientInfo + index * sizeof(ClientInfo_t));
-	float FOV = Mem.read<float>(offsets::FOV);
+	CEntity_t* cent = Mem.Ptr<CEntity_t*>(offsets::CEntity + index * sizeof(CEntity_t));
+	ClientInfo_t* cinfo = Mem.Ptr<ClientInfo_t*>(offsets::ClientInfo + index * sizeof(ClientInfo_t));
+	float FOV = Mem.Read<float>(offsets::FOV);
 
 	const char* name = CG_GetUsernameX(index);
 	const char* clantag = CG_GetClantag(index);
 
-	LocalPlayer.SetInfo(cent, cinfo, name, clantag, index);
-
+	LocalPlayer.CEntity = cent;
+	LocalPlayer.ClientInfo = cinfo;
+	LocalPlayer.Index = index;
+	LocalPlayer.Name = name;
+	LocalPlayer.Clantag = clantag;
+	LocalPlayer.FOV = FOV;
 }
 
-const LocalEntity *EntityManager::GetLocalPlayer() { return &LocalPlayer; }
+LocalEntity *EntityManager::GetLocalPlayer() { return &LocalPlayer; }
 
 const std::vector<Entity> &EntityManager::GetEntities() { return EntityList; }

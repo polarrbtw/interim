@@ -187,6 +187,7 @@
     <ClCompile Include="ext\minhook\trampoline.c" />
     <ClCompile Include="ext\minhook\hde\hde32.c" />
     <ClCompile Include="ext\minhook\hde\hde64.c" />
+    <ClCompile Include="src\features\aimbot.cpp" />
     <ClCompile Include="src\features\esp.cpp" />
     <ClCompile Include="src\hooks\engine.cpp" />
     <!-- Project Sources -->
@@ -194,6 +195,7 @@
     <ClCompile Include="src\hooks\hooks.cpp" />
     <ClCompile Include="src\render\gui.cpp" />
     <ClCompile Include="src\render\menu.cpp" />
+    <ClCompile Include="src\render\widgets.cpp" />
     <ClCompile Include="src\sdk\Entity.cpp" />
     <ClCompile Include="src\sdk\EntityManager.cpp" />
     <ClCompile Include="src\util\math.cpp" />
@@ -216,6 +218,7 @@
     <ClInclude Include="ext\minhook\MinHook.h" />
     <ClInclude Include="ext\minhook\trampoline.h" />
     <ClInclude Include="src\common.hpp" />
+    <ClInclude Include="src\features\aimbot.hpp" />
     <ClInclude Include="src\features\esp.hpp" />
     <ClInclude Include="src\globals.hpp" />
     <ClInclude Include="src\hooks\engine.hpp" />

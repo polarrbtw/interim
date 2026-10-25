@@ -7,6 +7,8 @@
 #include <globals.hpp>
 #include <settings.hpp>
 
+#include <sdk/EntityManager.hpp> // TEMPORARY
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wideParam, LPARAM longParam);
@@ -137,54 +139,6 @@ void GUI::Destroy() {
   SetWindowLongPtr(hwnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(oWindowProc));
 
   DestroyDirectX();
-}
-
-void GUI::RenderMenu() {
-    ImGui::Begin("interim", &open);
-    if (ImGui::Button("Unload")) { globals->Running = false; }
-
-    ImGui::Checkbox("ESP", &Settings::ESP::Enabled);
-    ImGui::Checkbox("Boxes", &Settings::ESP::Box);
-    ImGui::Checkbox("Skeleton", &Settings::ESP::Bone);
-    ImGui::Checkbox("Names", &Settings::ESP::Name);
-    ImGui::Checkbox("Distance", &Settings::ESP::Distance);
-
-    ImGui::Checkbox("Ignore Dead", &Settings::ESP::IgnoreDead);
-    ImGui::Checkbox("Ignore Team", &Settings::ESP::IgnoreTeam);
-
-    if (ImGui::Checkbox("Third Person", &Settings::Cvar::ThirdPerson)) {
-        if (Settings::Cvar::ThirdPerson)
-            Mem.WriteDvar(cvars::cg_thirdperson, 1);
-        else
-            Mem.WriteDvar(cvars::cg_thirdperson, 0);
-    }
-
-    if (ImGui::Checkbox("No Smoke", &Settings::Cvar::NoSmoke)) {
-        if (Settings::Cvar::NoSmoke)
-            Mem.WriteDvar(cvars::fx_draw, 0);
-        else
-            Mem.WriteDvar(cvars::fx_draw, 1);
-    }
-
-    if (ImGui::Checkbox("No Jump Cooldown", &Settings::Cvar::NoJumpCooldown)) {
-        if (Settings::Cvar::NoJumpCooldown)
-            Mem.WriteDvar(cvars::jump_slowdown, 0);
-        else
-            Mem.WriteDvar(cvars::jump_slowdown, 1);
-    }
-
-    ImGui::Text("iw3mp.exe base: 0x%X", Mem.ModBase);
-    ImGui::Text("cod4x_021.dll base: 0x%X", Mem.Cod4xBase);
-
-#ifdef _DEBUG
-    ImGui::SliderFloat("Width", &Settings::Debug::Width, 10.0f, 80.0f, "%.3f", 0);
-    ImGui::SliderFloat("Height", &Settings::Debug::Height, 50.0f, 125.0f, "%.3f", 0);
-
-    // rendering thread might be fried
-    ImGui::ShowMetricsWindow();
-#endif
-
-    ImGui::End();
 }
 
 LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wideParam, LPARAM longParam) {

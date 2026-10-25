@@ -1,30 +1,16 @@
 #include "Entity.hpp"
+#include <sdk/offsets.hpp>
+#include <util/memory.hpp>
 
 // entity
-bool Entity::IsValid() const { return m_centity.IsValidEntity; }
-bool Entity::IsAlive() const { return m_centity.IsAlive; }
-bool Entity::IsADS() const { return m_cinfo.ADS; }
-bool Entity::IsShooting() const { return m_cinfo.Shooting; }
-
-uint32_t Entity::GetIndex() const { return m_centity.ClientNumber; }
-uint32_t Entity::GetEntityType() const { return m_centity.EntityType; }
-uint32_t Entity::GetTeam() const { return m_cinfo.Team; }
-uint32_t Entity::GetStance() const { return m_cinfo.Stance; }
-uint32_t Entity::GetWeaponNumber() const { return m_cinfo.WeaponNumber; }
-
-Vector3 Entity::GetPosition() const { return m_centity.Position; };
-
-const char* Entity::GetName() const { return m_name; }
-
-void Entity::SetInfo(CEntity_t& centity, const ClientInfo_t& cinfo, const char* name, const char* clantag, int index) {
-	m_centity = centity;
-	m_cinfo = cinfo;
-	m_index = index;
-	m_name = name;
-	m_clantag = clantag;
-}
+bool Entity::IsValid() const { return CEntity->IsValidEntity; }
+bool Entity::IsAlive() const { return CEntity->IsAlive; }
+bool Entity::IsADS() const { return ClientInfo->ADS; }
+bool Entity::IsShooting() const { return ClientInfo->Shooting; }
 
 // localplayer
-Vector2 LocalEntity::GetViewAngles() const { return m_centity.ViewAngles; }
-float LocalEntity::GetFOV() const { return FOV; }
-void LocalEntity::SetFOV(float newFOV) { FOV = newFOV; }
+void LocalEntity::SetViewAngles(Vector2 NewViewAngles) {
+	uintptr_t ViewAnglesAddr = offsets::ClientInfo + (Index * sizeof(ClientInfo_t)) + 0x03E4; // 0x03E4 is ViewAngles in ClientInfo_t
+
+	Mem.WriteRaw<Vector2>(ViewAnglesAddr, NewViewAngles);
+}

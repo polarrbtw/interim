@@ -5,37 +5,21 @@
 
 class Entity {
 public:
+  CEntity_t* CEntity{};
+  ClientInfo_t* ClientInfo{};
+  int32_t Index{};
+  const char* Name{};
+  const char* Clantag{};
+
   bool IsValid() const;
   bool IsAlive() const;
   bool IsADS() const;
   bool IsShooting() const;
-
-  uint32_t GetIndex() const;
-  uint32_t GetTeam() const;
-  uint32_t GetStance() const;
-  uint32_t GetEntityType() const;
-  uint32_t GetWeaponNumber() const;
-
-  Vector3 GetPosition() const;
-
-  const char* GetName() const;
-
-  void SetInfo(CEntity_t& centity, const ClientInfo_t& cinfo, const char* name, const char* clantag, int index);
-
-protected:
-  CEntity_t m_centity;
-  ClientInfo_t m_cinfo;
-  int32_t m_index;
-  const char* m_name;
-  const char* m_clantag;
 };
 
 class LocalEntity : public Entity {
 public:
-  float FOV;
-  
-  Vector2 GetViewAngles() const;
+  float FOV{};
 
-  float GetFOV() const;
-  void SetFOV(float newFOV);
+  void SetViewAngles(Vector2 NewViewAngles);
 };

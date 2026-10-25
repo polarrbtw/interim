@@ -7,6 +7,8 @@ namespace Hooks {
 void Setup();
 void Destroy();
 
+inline bool initialized{ false };
+
 constexpr void *VirtualFunction(void *thisptr, size_t index) {
   return (*static_cast<void ***>(thisptr))[index];
 }

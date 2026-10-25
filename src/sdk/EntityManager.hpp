@@ -7,7 +7,7 @@ public:
   void UpdateEntities();
   void UpdateLocalPlayer();
 
-  const static LocalEntity* GetLocalPlayer();
+  static LocalEntity* GetLocalPlayer();
   const static std::vector<Entity>& GetEntities();
 
 private:

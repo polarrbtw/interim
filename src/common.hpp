@@ -8,8 +8,6 @@
 #include <sdk/Entity.hpp>
 #include <sdk/offsets.hpp>
 
-inline void foo() {}
-
 // allow using memory functions in other files
 extern Memory Mem;
 
@@ -24,6 +22,10 @@ extern Memory Mem;
 	#define error(msg, ...)
 #endif
 
+// helper for colors
+inline ImU32 ToU32(float col[3]) {
+    return ImGui::ColorConvertFloat4ToU32(ImVec4(col[0], col[1], col[2], 1.0f));
+}
 
 // imgui colors
 constexpr ImU32 RED = IM_COL32(255, 0, 0, 255);

@@ -33,23 +33,28 @@ public:
     return true;
   }
 
-  template <typename T> T read(uintptr_t addr) {
-    return *reinterpret_cast<T *>(ModBase + addr);
+  // with iw3mp.exe as base address
+  template <typename T> T Read(uintptr_t addr) {
+    return *reinterpret_cast<T*>(ModBase + addr);
   }
 
-  template <typename T> T raw(uintptr_t addr) {
-    return *reinterpret_cast<T *>(addr);
+  // without base address
+  template <typename T> T Raw(uintptr_t addr) {
+    return *reinterpret_cast<T*>(addr);
   }
 
-  template <typename T> T ptr(uintptr_t addr) {
+  // without dereferencing
+  template <typename T> T Ptr(uintptr_t addr) {
     return reinterpret_cast<T>(addr);
   }
 
-  template <typename T> void write(uintptr_t addr, T value) {
-    *reinterpret_cast<T *>(ModBase + addr) = value;
+  // with iw3mp.exe as base address
+  template <typename T> void Write(uintptr_t addr, T value) {
+    *reinterpret_cast<T*>(ModBase + addr) = value;
   }
 
-  template <typename T> void writeRaw(uintptr_t addr, T value) {
+  // without base address
+  template <typename T> void WriteRaw(uintptr_t addr, T value) {
     *reinterpret_cast<T*>(addr) = value;
   }
 
@@ -59,7 +64,7 @@ public:
   void Patch(uintptr_t addr, int instructions, int size) {}
 
   void WriteDvar(uintptr_t dvar, int option) {
-    write<BYTE>(dvar, option);
+    Write<BYTE>(dvar, option);
   }
 
 };

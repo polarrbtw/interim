@@ -11,12 +11,12 @@ A lightweight WIP internal cheat for COD4x (v21.5)
 ## Roadmap
 
 - [ ] Fix Inconsistencies (file names, variable names)
-- [ ] More Visual Options
-- [ ] Bone Based Aimbot
+- [x] More Visual Options
+- [x] Bone Based Aimbot (Partially Complete)
 - [ ] Silent Aim
 - [ ] Triggerbot
 - [ ] Pattern Scanning
-- [ ] Proper ImGui Menu
+- [x] Proper (ish) ImGui Menu
 - TBD
 
 

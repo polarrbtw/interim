@@ -3,14 +3,16 @@
 
 bool WorldToScreen(const Vec3& in, Vec2& out)
 {
-    int ScreenCenterX = globals->Refdef.WindowWidth / 2;
-    int ScreenCenterY = globals->Refdef.WindowHeight / 2;
+    Refdef_t Refdef = Mem.Raw<Refdef_t>(offsets::Refdef);
 
-    Vec3 Right = globals->Refdef.ViewAxis[1];
-    Vec3 Up = globals->Refdef.ViewAxis[2];
-    Vec3 Forward = globals->Refdef.ViewAxis[0];
+    int ScreenCenterX = Refdef.WindowWidth / 2;
+    int ScreenCenterY = Refdef.WindowHeight / 2;
 
-    Vec3 Local = in - globals->Refdef.ViewOrigin;
+    Vec3 Right = Refdef.ViewAxis[1];
+    Vec3 Up = Refdef.ViewAxis[2];
+    Vec3 Forward = Refdef.ViewAxis[0];
+
+    Vec3 Local = in - Refdef.ViewOrigin;
 
     Vec3 TransForm;
     TransForm.x = (Local.x * Right.x + Local.y * Right.y + Local.z * Right.z);
@@ -20,8 +22,18 @@ bool WorldToScreen(const Vec3& in, Vec2& out)
     if (TransForm.z < 0.01f)
         return false;
 
-    out.x = ScreenCenterX * (1.0f - (TransForm.x / globals->Refdef.FovX / TransForm.z));
-    out.y = ScreenCenterY * (1.0f - (TransForm.y / globals->Refdef.FovY / TransForm.z));
+    out.x = ScreenCenterX * (1.0f - (TransForm.x / Refdef.FovX / TransForm.z));
+    out.y = ScreenCenterY * (1.0f - (TransForm.y / Refdef.FovY / TransForm.z));
+
+    if (out.IsZero()) {
+        return false;
+    }
 
     return true;
+}
+
+Vec2 GetScreenCenter() {
+    Refdef_t Refdef = Mem.Raw<Refdef_t>(offsets::Refdef);
+
+    return { Refdef.WindowWidth * 0.5f, Refdef.WindowHeight * 0.5f }; // * 0.5f instead of / 2
 }
