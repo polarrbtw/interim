@@ -11,7 +11,7 @@ namespace Settings {
         inline bool Box{ false };
         inline bool Name{ false };
         inline bool Bone{ false };
-        inline bool State{ false }; // moving, running, scoped in and similar
+        inline bool Stance{ false }; // moving, running, scoped in and similar
         inline bool Distance{ false };
         inline bool LookingAtYou{ false };
         inline bool Radar{ false };
@@ -23,9 +23,9 @@ namespace Settings {
         inline float BoxColor[3]        = { 1.0f, 1.0f, 1.0f };
         inline float BoneColor[3]       = { 1.0f, 1.0f, 1.0f };
         inline float NameColor[3]       = { 1.0f, 1.0f, 1.0f };
-        inline float StateColor[3]      = { 1.0f, 1.0f, 1.0f };
+        inline float StanceColor[3]     = { 1.0f, 1.0f, 1.0f };
         inline float DistanceColor[3]   = { 1.0f, 1.0f, 1.0f };
-        inline float StrokeColor[3]     = { 0.0f, 0.0f, 0.0f };
+        inline float StrokeColor[3]     = { 0.0f, 0.0f, 0.0f }; // black
 	} // namespace ESP
 
 	namespace Cvar {
@@ -33,6 +33,9 @@ namespace Settings {
         inline bool FX_Draw{ false }; // no smoke
         inline bool Jump_Slowdown{ false }; // disable slowdown once you land after jumping
         inline bool CompassShowEnemies{ false }; // show enemies on radar
+
+        inline float FOV{ 80 };
+        inline float FOVScale{ 1.125 };
 	} // namespace Cvar
 
 	namespace Aimbot {

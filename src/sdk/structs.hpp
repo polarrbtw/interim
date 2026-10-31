@@ -7,12 +7,31 @@
 // Proning and Moving: 256
 // Going down ladder: 524288
 // On ladder / going up ladder: 262144
+// Vaulting: 4194304, 8388608, 268435456, 16777216, 67108864 (another vault)
+// vaulting is weird,
 
 enum STANCE : uint32_t {
     STANDING = 2,
-    CROUCHING = 4,
-    PRONING = 8,
-    RUNNING = 1048576
+    CROUCHED = 4,
+    PRONED = 8,
+
+    MOVINGCROUCHED = 4096,
+    MOVINGPRONED = 256,
+    WALKING = 1024,
+    RUNNING = 1048576,
+
+    DOWNLADDER = 524288,
+    UPLADDER = 262144,
+
+    CLIMB = 4194304, // basically all same things
+    JUMPCLIMB = 8388608,
+    //VAULT = 268435456,
+    //VAULT2 = 16777216,
+    //VAULT3 = 67108864,
+    //VAULT4 = 33554432,
+
+    CROUCHADS = 64,
+    WALKINGADS = 16
 };
 
 enum TEAM : uint32_t {

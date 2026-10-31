@@ -1,4 +1,5 @@
 #include "esp.hpp"
+#include "sdk/structs.hpp"
 #include "settings.hpp"
 #include "util/math.hpp"
 #include <common.hpp>
@@ -223,6 +224,67 @@ void ESP::DrawPlayers() {
                     Widgets::Notify(WARNING, msg);
                 }
             }
+		}
+
+		if (Settings::ESP::Stance) {
+		    int StanceID = Entity.ClientInfo->Stance;
+			std::string Stance{};
+
+			switch (StanceID) {
+    			case STANDING:
+                case WALKINGADS:
+    			    Stance = "Standing";
+                    break;
+                case CROUCHED:
+                case MOVINGCROUCHED:
+                case CROUCHADS:
+                    Stance = "Crouched";
+                    break;
+                case PRONED:
+                case MOVINGPRONED:
+                    Stance = "Proned";
+                    break;
+                case RUNNING:
+                    Stance = "Running";
+                    break;
+                case DOWNLADDER:
+                case UPLADDER:
+                    Stance = "On Ladder";
+                    break;
+
+                default:
+                    Stance = "Vaulting"; // there are so many for vaulting cant find list them all
+                    break;
+			}
+
+    		Vec2 LeftFoot = Engine::GetPlayerTag(bones.list[LEFTFOOT], Entity.CEntity);
+    		Vec2 RightFoot = Engine::GetPlayerTag(bones.list[RIGHTFOOT], Entity.CEntity);
+
+    		Vec2 Midpoint = LeftFoot.Midpoint(RightFoot);
+
+    		ImVec2 TextSize = ImGui::CalcTextSize(Stance.c_str());
+            Vec2 CenteredText{};
+
+            if (Settings::ESP::Name && Settings::ESP::Distance) {
+                CenteredText = { Midpoint.x - (TextSize.x * 0.5f), Midpoint.y + 20.0f };
+            }
+            else if (Settings::ESP::Name) {
+                CenteredText = { Midpoint.x - (TextSize.x * 0.5f), Midpoint.y + 10.0f };
+            }
+            else if (Settings::ESP::Distance) {
+                CenteredText = { Midpoint.x - (TextSize.x * 0.5f), Midpoint.y + 10.0f };
+            }
+            else {
+				CenteredText = { Midpoint.x - (TextSize.x * 0.5f), Midpoint.y };
+			}
+
+            // stroke
+			draw->AddText({ CenteredText.x + 1.0f, CenteredText.y - 1.0f }, ToU32(Settings::ESP::StrokeColor), Stance.c_str());
+			draw->AddText({ CenteredText.x - 1.0f, CenteredText.y + 1.0f }, ToU32(Settings::ESP::StrokeColor), Stance.c_str());
+
+			// stance
+			draw->AddText(CenteredText, ToU32(Settings::ESP::StanceColor), Stance.c_str());
+
 		}
 	}
 }

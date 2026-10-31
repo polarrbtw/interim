@@ -79,6 +79,14 @@ void Engine::TestingCommands() {
     SendCmd("player_sustainAmmo 1");
 }
 
+void Engine::SetFOV(float Value) {
+    Mem.Write<float>(offsets::FOV, Value);
+}
+
+void Engine::SetFOVScale(float Value) {
+    Mem.Write<float>(offsets::FOVScale, Value);
+}
+
 const char* Engine::CG_GetClientName(int index) {
 	unsigned long valid = *reinterpret_cast<unsigned long*>(0x4CC * index + 0x839270); // if ( *(_DWORD *)(0x4CC * i + 0x839270)
 	if (!valid) return "invalid";

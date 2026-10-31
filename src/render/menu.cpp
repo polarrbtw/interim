@@ -84,11 +84,13 @@ void Menu::Tabs::VisualsTab() {
         Widgets::CheckboxPicker("Skeleton", &Settings::ESP::Bone, "SkeletonColPicker", Settings::ESP::BoneColor);
         Widgets::CheckboxPicker("Names", &Settings::ESP::Name, "NameColPicker", Settings::ESP::NameColor);
         Widgets::CheckboxPicker("Distance", &Settings::ESP::Distance, "DistanceColPicker", Settings::ESP::DistanceColor);
+        Widgets::CheckboxPicker("Stance", &Settings::ESP::Stance, "StanceColPicker", Settings::ESP::StanceColor);
         ImGui::Text("Stroke");
         ImGui::SameLine();
         ImGui::ColorEdit4("StrokeColPicker", Settings::ESP::StrokeColor, PickerFlags);
 
         ImGui::Checkbox("Ignore Dead", &Settings::ESP::IgnoreDead);
+        ImGui::SameLine();
         ImGui::Checkbox("Ignore Team", &Settings::ESP::IgnoreTeam);
     } ImGui::EndChild();
 
@@ -96,14 +98,14 @@ void Menu::Tabs::VisualsTab() {
 
     // Other Visuals Tab
     ImGui::BeginChild("OtherVisuals", ImVec2(ImGui::GetContentRegionAvail().x, 195), ChildFlags, WindowFlags);  {
-        ImGui::Text("Other");
+        ImGui::Text("Other (WIP)");
         ImGui::Checkbox("Looking at You Indicators", &Settings::ESP::LookingAtYou);
     } ImGui::EndChild();
 }
 
 void Menu::Tabs::ExploitsTab() {
     // Exploits Tab
-    ImGui::BeginChild("Exploits", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, 260), ChildFlags, WindowFlags); {
+    ImGui::BeginChild("Exploits", ImVec2(ImGui::GetContentRegionAvail().x, 195), ChildFlags, WindowFlags); {
         ImGui::Text("Cvars");
         if (ImGui::Checkbox("Third Person", &Settings::Cvar::CG_Thirdperson))
             Exploits::ThirdPerson();
@@ -116,6 +118,16 @@ void Menu::Tabs::ExploitsTab() {
 
         if (ImGui::Checkbox("Show Enemies on Radar", &Settings::Cvar::CompassShowEnemies))
             Exploits::RadarEnemies();
+
+        ImGui::Text("Field of View");
+        // 8 is the same as 1,2,3,4,5,6,7
+        if(ImGui::SliderFloat("FOV", &Settings::Cvar::FOV, 8, 120, "%.0f")) {
+            Engine::SetFOV(Settings::Cvar::FOV);
+        }
+        if (ImGui::SliderFloat("FOV Scale", &Settings::Cvar::FOVScale, 0.5, 2.0f, "%.3f")) {
+            Engine::SetFOVScale(Settings::Cvar::FOVScale);
+        }
+
     } ImGui::EndChild();
 }
 
@@ -135,6 +147,7 @@ void Menu::Tabs::DebugTab() {
         // commands for devmap
         if (ImGui::Button("Commands for testing")) {
             Engine::TestingCommands();
+            Widgets::Notify(SUCCESS, "Ran all commands!");
         }
 
         ImGui::Text("iw3mp.exe base: 0x%X", Mem.ModBase);

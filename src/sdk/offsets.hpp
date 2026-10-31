@@ -13,7 +13,8 @@ namespace offsets {
 	inline constexpr uintptr_t IsInGame = 0x0074E35C;
 	inline constexpr uintptr_t ScreenWidth = 0x00797608;
 	inline constexpr uintptr_t ScreenHeight = 0x0079760C;
-	inline constexpr uintptr_t FOV = 0x00C7AF1AC; // iw3mp.exe+C7AF1AC
+	inline constexpr uintptr_t FOV = 0x00C7AF1AC; // iw3mp.exe+C7AF1AC, float
+	inline constexpr uintptr_t FOVScale = 0x0C7ACE58; //  iw3mp.exe+C7ACE58, float
 	inline constexpr uintptr_t ViewAngles = 0x00C84FD8;
 
 	// screenshotrequest in ida - 0x64E53EE0 ; image base - 0x64D00000

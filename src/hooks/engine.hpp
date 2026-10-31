@@ -6,6 +6,8 @@ typedef unsigned short WORD;
 namespace Engine {
 	void Setup();
 	void TestingCommands();
+	void SetFOV(float Value);
+	void SetFOVScale(float Value);
 
 	const char* CG_GetClientName(int index);
 	const char* CG_GetClientClantag(int index);

@@ -10,7 +10,7 @@
 
 namespace {
     float NormalizeAngle(float angle) {
-        if (angle > 180.f)  angle -= 360.f;
+        if (angle > 180.f) angle -= 360.f;
         else if (angle < -180.f) angle += 360.f;
         return angle;
     }
@@ -49,19 +49,19 @@ void Aimbot::RunAimbot() {
             return;
 
         TargetEntity = target;
-        TargetIndex  = target.Index;
+        TargetIndex = target.Index;
     }
 
-    Refdef_t* Refdef = reinterpret_cast<Refdef_t*>(offsets::Refdef);
+    Refdef_t* Refdef = Mem.Ptr<Refdef_t*>(offsets::Refdef);
 
     Vector2 Angles = CalculateAngles(Refdef->ViewOrigin, Engine::GetTagPosition(bones.list[HEAD], TargetEntity.CEntity));
 
     // some claude math going on here
     const Vector3& ForwardVec = Refdef->ViewAxis[0];
-    float CurrentYaw =  atan2f(ForwardVec.y, ForwardVec.x) * RADTODEG;
+    float CurrentYaw = atan2f(ForwardVec.y, ForwardVec.x) * RADTODEG;
     float CurrentPitch = -asinf(std::clamp(ForwardVec.z, -1.0f, 1.0f)) * RADTODEG;
 
-    ViewAngles_t* ViewAngles = reinterpret_cast<ViewAngles_t*>(offsets::ViewAngles);
+    ViewAngles_t* ViewAngles = Mem.Ptr<ViewAngles_t*>(offsets::ViewAngles);
     ViewAngles->pitch += NormalizeAngle(Angles.y - CurrentPitch);
     ViewAngles->yaw += NormalizeAngle(Angles.x - CurrentYaw);
 }

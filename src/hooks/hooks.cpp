@@ -123,5 +123,7 @@ void __cdecl Hooks::hk_ComError(int a1, char* Format, ...) {
     //_vsnprintf(&Buffer, 0x1000u, Format, va);
     vsnprintf(buffer, sizeof(buffer), Format, va);
 
+    Engine::PrintConsole(buffer);
+
     oCom_Error(4, const_cast<char*>("%s"), buffer); // case 4 does nothing
 }

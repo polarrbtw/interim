@@ -43,7 +43,7 @@ public:
     return *reinterpret_cast<T*>(addr);
   }
 
-  // without dereferencing
+  // read without dereferencing
   template <typename T> T Ptr(uintptr_t addr) {
     return reinterpret_cast<T>(addr);
   }
