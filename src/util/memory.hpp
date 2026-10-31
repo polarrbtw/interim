@@ -59,11 +59,11 @@ public:
   }
 
   // todo
-  void NOP(PVOID addr, int bytes) {}
+  //void NOP(PVOID addr, int bytes) {}
 
-  void Patch(uintptr_t addr, int instructions, int size) {}
+  //void Patch(uintptr_t addr, int instructions, int size) {}
 
-  void WriteDvar(uintptr_t dvar, int option) {
+  void WriteDvar(uintptr_t dvar, BYTE option) {
     Write<BYTE>(dvar, option);
   }
 

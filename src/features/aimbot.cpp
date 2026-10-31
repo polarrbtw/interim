@@ -5,12 +5,8 @@
 #include "util/math.hpp"
 #include <settings.hpp>
 #include <common.hpp>
-#include <numbers>
 #include <WinUser.h>
 #include <algorithm>
-
-#define _USE_MATH_DEFINES 1
-constexpr float RADTODEG = 180.0f / std::numbers::pi_v<float>;
 
 namespace {
     float NormalizeAngle(float angle) {
@@ -25,7 +21,7 @@ Vector2 Aimbot::CalculateAngles(Vector3 from, Vector3 to) {
     float dy = to.y - from.y;
     float dz = to.z - from.z;
 
-    float yaw =  atan2f(dy, dx) * RADTODEG;
+    float yaw = atan2f(dy, dx) * RADTODEG;
     float pitch = -atan2f(dz, sqrtf(dx * dx + dy * dy)) * RADTODEG;
 
     return Vector2(yaw, std::clamp(pitch, -90.0f, 90.0f));

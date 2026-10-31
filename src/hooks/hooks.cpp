@@ -75,6 +75,8 @@ long __stdcall Hooks::EndScene(IDirect3DDevice9 *device) {
         Menu::Render(); // new menu
     }
 
+    Widgets::RenderNotifications();
+
     ImGui::EndFrame();
     ImGui::Render();
     ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
@@ -103,12 +105,17 @@ int __cdecl Hooks::hk_ScreenshotRequest(int msg, int command) {
     info("ScreenshotRequest ran");
     globals->FrameCounter = 3;
 
+    Widgets::Notify(WARNING, "An admin took a screenshot of your screen!"); // it will run after the screenshot
+
     return oScreenshotRequest(msg, command);
 }
 
 // prevent crashing
 void __cdecl Hooks::hk_ComError(int a1, char* Format, ...) {
     error("Com_Error ran");
+    Widgets::Notify(ERR, "Com_Error Ran");
+
+    //return;
 
     char buffer[0x1000u];
     va_list va; // [esp+20h] [ebp+10h] BYREF

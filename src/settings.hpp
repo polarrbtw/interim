@@ -3,7 +3,6 @@
 // todo:
 // Singleton this later
 
-#include "common.hpp"
 namespace Settings {
 
 	namespace ESP {
@@ -14,6 +13,8 @@ namespace Settings {
         inline bool Bone{ false };
         inline bool State{ false }; // moving, running, scoped in and similar
         inline bool Distance{ false };
+        inline bool LookingAtYou{ false };
+        inline bool Radar{ false };
 
         inline bool IgnoreDead{ true };
         inline bool IgnoreTeam{ false };
@@ -28,9 +29,10 @@ namespace Settings {
 	} // namespace ESP
 
 	namespace Cvar {
-        inline bool ThirdPerson{ false };
-        inline bool NoSmoke{ false };
-        inline bool NoJumpCooldown{ false };
+        inline bool CG_Thirdperson{ false }; // self explanatory
+        inline bool FX_Draw{ false }; // no smoke
+        inline bool Jump_Slowdown{ false }; // disable slowdown once you land after jumping
+        inline bool CompassShowEnemies{ false }; // show enemies on radar
 	} // namespace Cvar
 
 	namespace Aimbot {

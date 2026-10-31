@@ -1,4 +1,5 @@
 #include "engine.hpp"
+#include "sdk/offsets.hpp"
 #include <globals.hpp>
 #include <common.hpp>
 #include <sdk/EntityManager.hpp>
@@ -7,6 +8,8 @@ oCG_GetUsernameX CG_GetUsernameX{ nullptr };
 oCG_GetClantag CG_GetClantag{ nullptr };
 oCom_IsLegacyServer Com_IsLegacyServer{ nullptr };
 oRegisterTag RegisterTag{ nullptr };
+oSendCommand SendCommand{ nullptr };
+oWriteToConsole WriteToConsole{ nullptr };
 
 // no need to have these functions in other files
 namespace {
@@ -54,15 +57,26 @@ namespace {
 } // namespace
 
 void Engine::Setup() {
-	CG_GetUsernameX = (oCG_GetUsernameX)(Mem.Cod4xBase + offsets::engine::CG_GetUsernameX);
-	CG_GetClantag = (oCG_GetClantag)(Mem.Cod4xBase + offsets::engine::CG_GetClantag);
-	Com_IsLegacyServer = (oCom_IsLegacyServer)(Mem.Cod4xBase + offsets::engine::Com_IsLegacyServer);
+    // cod4x
+	CG_GetUsernameX = reinterpret_cast<oCG_GetUsernameX>(Mem.Cod4xBase + offsets::engine::CG_GetUsernameX);
+	CG_GetClantag = reinterpret_cast<oCG_GetClantag>(Mem.Cod4xBase + offsets::engine::CG_GetClantag);
+	Com_IsLegacyServer = reinterpret_cast<oCom_IsLegacyServer>(Mem.Cod4xBase + offsets::engine::Com_IsLegacyServer);
 
-	RegisterTag = (oRegisterTag)(offsets::engine::RegisterTag);
+	// game
+	RegisterTag = reinterpret_cast<oRegisterTag>(offsets::engine::RegisterTag);
+	SendCommand = reinterpret_cast<oSendCommand>(offsets::engine::SendCommandToConsole);
+	WriteToConsole = reinterpret_cast<oWriteToConsole>(offsets::engine::WriteToConsole);
 
 	info("engine functions initialized");
 
 	RegisterTags();
+}
+
+void Engine::TestingCommands() {
+    PrintConsole("Ran all test commands");
+    SendCmd("jump_slowdownEnable 0");
+    SendCmd("bg_fallDamageMinHeight 10000");
+    SendCmd("player_sustainAmmo 1");
 }
 
 const char* Engine::CG_GetClientName(int index) {
@@ -184,4 +198,18 @@ bool Engine::GetClosestEnemyFOV(Entity& out, int MaxDistance) {
 	if (!Closest.CEntity) return false;
 	out = Closest;
 	return true;
+}
+
+int Engine::SendCmd(const char* command) {
+    return SendCommand(0, 0, command);
+}
+
+int Engine::PrintConsole(const char *Format, ...) {
+    char buffer[0x1000u];
+    va_list va;
+    va_start(va, Format);
+    vsnprintf(buffer, sizeof(buffer), Format, va);
+    va_end(va);
+
+    return WriteToConsole(0, "%s", buffer);
 }

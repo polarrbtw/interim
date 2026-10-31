@@ -1,9 +1,11 @@
-#include "features/aimbot.hpp"
-#include "render/gui.hpp"
+#include <features/aimbot.hpp>
+#include <render/gui.hpp>
+#include <render/menu.hpp>
 #include <windows.h>
 
 #include <hooks/hooks.hpp>
 #include <features/esp.hpp>
+#include <features/exploits.hpp>
 #include <thread>
 
 #include <common.hpp>
@@ -23,6 +25,7 @@ void AimbotThread();
         Hooks::Destroy();
     if (GUI::initialized)
         GUI::Destroy();
+    Exploits::Destroy(); // disable all cvars
 
     DestroyConsole();
     FreeLibraryAndExitThread(instance, 0);
@@ -39,6 +42,9 @@ void Setup(const HMODULE instance) {
         // start threads
         std::thread(UpdateGlobals).detach();
         std::thread(AimbotThread).detach();
+        // esp runs on the render thread
+
+        Widgets::Notify(SUCCESS, "interim started correctly!");
     }
     catch (const std::exception& err) {
         MessageBeep(MB_ICONERROR);

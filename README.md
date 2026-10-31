@@ -4,8 +4,9 @@ A lightweight WIP internal cheat for COD4x (v21.5)
 
 ## Features (wip)
 
-- ESP (Bone, Name, Box)
-- Cvars
+- Aimbot
+- ESP (Box, Skeleton, Name, Distance, Looking At You Alerts)
+- Cvars (Show Enemies on Radar, No Smoke, No Jump Cooldown, Third Person)
 
 
 ## Roadmap
@@ -17,6 +18,7 @@ A lightweight WIP internal cheat for COD4x (v21.5)
 - [ ] Triggerbot
 - [ ] Pattern Scanning
 - [x] Proper (ish) ImGui Menu
+- [ ] Fix Random Crashes
 - TBD
 
 

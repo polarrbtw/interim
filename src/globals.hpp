@@ -3,12 +3,13 @@
 #include <sdk/offsets.hpp>
 #include <sdk/structs.hpp>
 #include <hooks/engine.hpp>
+#include <atomic>
 
 class Globals {
 public:
 	int WindowHeight{ 0 };
 	int WindowWidth{ 0 };
-	int FrameCounter{ 0 }; // for hiding esp in hk_ScreenshotRequest
+	std::atomic<int> FrameCounter{ 0 }; // for hiding esp in hk_ScreenshotRequest; atomic since its being overwritten from a different thread
 
 	bool IsInGame{ false };
 	bool Running{ true };

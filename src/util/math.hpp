@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <iostream>
+#include <cmath> // no need for iostream
 #include <math.h>
 #include <imgui.h>
 
@@ -40,11 +40,14 @@ struct Vec3
     float Length() const {
         return std::sqrt(x * x + y * y + z * z);
     }
+    float Dot(const Vec3& other) const {
+        return ( x * other.x ) + ( y * other.y ) + ( z * other.z );
+    }
     Vec3 operator-(const Vec3& other) const {
         return { x - other.x, y - other.y, z - other.z };
     }
     Vec3 operator+(const Vec3 other) const {
-        return { x + other.x, y + other.y, z - other.z };
+        return { x + other.x, y + other.y, z + other.z }; // fixed typo
     }
 };
 

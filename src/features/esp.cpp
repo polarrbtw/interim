@@ -1,15 +1,17 @@
 #include "esp.hpp"
 #include "settings.hpp"
+#include "util/math.hpp"
 #include <common.hpp>
+#include <ratio>
 #include <sdk/EntityManager.hpp>
+#include <render/menu.hpp>
 
 #include <imgui.h>
-#include <imgui_impl_win32.h>
-#include <imgui_impl_dx9.h>
-#include <imgui_internal.h>
 
-#include <thread>
 #include <chrono>
+#include <unordered_map>
+
+#define concat(first, second) first second
 
 namespace {
 	void ConnectBone(ImDrawList* draw, Vec2 bone1, Vec2 bone2) {
@@ -17,10 +19,29 @@ namespace {
 
 		draw->AddLine(bone1, bone2, ToU32(Settings::ESP::BoneColor), 1.0f);
 	}
+
+	// Spherical to Cartesian
+	Vector3 GetForwardVector(Vector2 ViewAngles) {
+    float PitchRad = ViewAngles.x * DEGTORAD;
+    float YawRad = ViewAngles.y * DEGTORAD;
+
+    float SinPitch = sin(PitchRad);
+    float CosPitch = cos(PitchRad);
+    float SinYaw = sin(YawRad);
+    float CosYaw = cos(YawRad);
+
+    // build the direction vector based on the angles
+    Vector3 ForwardVec;
+    ForwardVec.x = CosPitch * CosYaw;
+    ForwardVec.y = CosPitch * SinYaw;
+    ForwardVec.z = -SinPitch;
+
+    return ForwardVec;
+	}
 }
 
 void ESP::DrawPlayers() {
-	if (!globals->Running) return;
+	if (!globals->Running || !globals->IsInGame) return;
 	if (!Settings::ESP::Enabled) return;
 
 	const auto& EntityList = EntityManager::GetEntities();
@@ -157,6 +178,51 @@ void ESP::DrawPlayers() {
 
 			// distance
 			draw->AddText(CenteredText, ToU32(Settings::ESP::DistanceColor), PlayerDistance);
+		}
+
+		// gimmick feature
+		if (Settings::ESP::LookingAtYou) {
+            Vector3 enemyToMe = LocalPlayer->CEntity->Position - Entity.CEntity->Position;
+            enemyToMe.Normalize();
+
+            float Dot = enemyToMe.Dot(GetForwardVector(Entity.CEntity->ViewAngles));
+            bool FacingMe = Dot > 0.95f;
+
+            // todo: add IsVisible check with CG_Trace
+
+            if (FacingMe) {
+                // prevention of spamming notifications
+                // but also be able to get notis for other enemies looking at you
+                auto now = std::chrono::steady_clock::now();
+                static std::unordered_map<int, std::chrono::time_point<std::chrono::steady_clock>> u{}; // only initialize once
+
+                auto Iterator = u.find(Entity.Index);
+
+                bool ShouldNotify = false;
+                // if index isnt stored in map then notify
+                if (Iterator == u.end()) {
+                    ShouldNotify = true;
+                }
+
+                // if 3.5s havent passed, don't notify (to stop spamming notifications)
+                else {
+                    auto IteratorTime = Iterator->second;
+
+                    if (now - IteratorTime > std::chrono::milliseconds(3500)) {
+                        ShouldNotify = true;
+                    }
+                }
+
+                if (ShouldNotify) {
+                    u[Entity.Index] = now; // store index with the time the notification ran
+
+                    // probably the worst way to do this
+                    char msg[48]; // 32 for name + 15 + null terminator (1) = 48
+                    strcpy_s(msg, sizeof(msg), Entity.Name);
+                    strcat_s(msg, sizeof(msg), " is facing you!");
+                    Widgets::Notify(WARNING, msg);
+                }
+            }
 		}
 	}
 }

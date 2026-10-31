@@ -1,9 +1,10 @@
-// todo: proper menu
 #include "menu.hpp"
-#include "imgui.h"
-#include "imgui_impl_dx9.h"
-#include "imgui_impl_win32.h"
+#include "hooks/engine.hpp"
 
+#include <imgui.h>
+#include <sdk/offsets.hpp>
+
+#include <features/exploits.hpp>
 #include <render/gui.hpp>
 #include <globals.hpp>
 #include <settings.hpp>
@@ -90,31 +91,31 @@ void Menu::Tabs::VisualsTab() {
         ImGui::Checkbox("Ignore Dead", &Settings::ESP::IgnoreDead);
         ImGui::Checkbox("Ignore Team", &Settings::ESP::IgnoreTeam);
     } ImGui::EndChild();
+
+    ImGui::SameLine();
+
+    // Other Visuals Tab
+    ImGui::BeginChild("OtherVisuals", ImVec2(ImGui::GetContentRegionAvail().x, 195), ChildFlags, WindowFlags);  {
+        ImGui::Text("Other");
+        ImGui::Checkbox("Looking at You Indicators", &Settings::ESP::LookingAtYou);
+    } ImGui::EndChild();
 }
 
 void Menu::Tabs::ExploitsTab() {
     // Exploits Tab
     ImGui::BeginChild("Exploits", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, 260), ChildFlags, WindowFlags); {
-        if (ImGui::Checkbox("Third Person", &Settings::Cvar::ThirdPerson)) {
-            if (Settings::Cvar::ThirdPerson)
-                Mem.WriteDvar(cvars::cg_thirdperson, 1);
-            else
-                Mem.WriteDvar(cvars::cg_thirdperson, 0);
-        }
+        ImGui::Text("Cvars");
+        if (ImGui::Checkbox("Third Person", &Settings::Cvar::CG_Thirdperson))
+            Exploits::ThirdPerson();
 
-        if (ImGui::Checkbox("No Smoke", &Settings::Cvar::NoSmoke)) {
-            if (Settings::Cvar::NoSmoke)
-                Mem.WriteDvar(cvars::fx_draw, 0);
-            else
-                Mem.WriteDvar(cvars::fx_draw, 1);
-        }
+        if (ImGui::Checkbox("No Smoke", &Settings::Cvar::FX_Draw))
+            Exploits::NoSmoke();
 
-        if (ImGui::Checkbox("No Jump Cooldown", &Settings::Cvar::NoJumpCooldown)) {
-            if (Settings::Cvar::NoJumpCooldown)
-                Mem.WriteDvar(cvars::jump_slowdown, 0);
-            else
-                Mem.WriteDvar(cvars::jump_slowdown, 1);
-        }
+        if (ImGui::Checkbox("No Jump Cooldown", &Settings::Cvar::Jump_Slowdown))
+            Exploits::JumpSlowdown();
+
+        if (ImGui::Checkbox("Show Enemies on Radar", &Settings::Cvar::CompassShowEnemies))
+            Exploits::RadarEnemies();
     } ImGui::EndChild();
 }
 
@@ -123,6 +124,18 @@ void Menu::Tabs::DebugTab() {
     ImGui::BeginChild("Debug", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, 195), ChildFlags, WindowFlags); {
         //ImGui::ShowDemoWindow(0);
         if (ImGui::Button("Unload")) { globals->Running = false; }
+
+        if (ImGui::Button("Test Notifications")) {
+            Widgets::Notify(SUCCESS, "Success notification");
+            Widgets::Notify(INFO, "Info notification");
+            Widgets::Notify(WARNING, "Warning notification");
+            Widgets::Notify(ERR, "Error notification");
+        }
+
+        // commands for devmap
+        if (ImGui::Button("Commands for testing")) {
+            Engine::TestingCommands();
+        }
 
         ImGui::Text("iw3mp.exe base: 0x%X", Mem.ModBase);
         ImGui::Text("cod4x_021.dll base: 0x%X", Mem.Cod4xBase);

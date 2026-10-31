@@ -22,7 +22,8 @@ namespace offsets {
 		inline constexpr uintptr_t AimTarget_GetTagPos = 0x004024B0; // iw3mp.exe+3470 0x00403470
 		inline constexpr uintptr_t RegisterTag = 0x00518290; // iw3mp.exe+118290
 		inline constexpr uintptr_t Com_Error = 0x004FD330; // iw3mp.exe+FD330
-		//inline constexpr uintptr_t AimTarget_GetTagPos_AA = 0x004024B0;
+		inline constexpr uintptr_t SendCommandToConsole = 0x004F9AB0; // iw3mp.exe+F9AB0
+		inline constexpr uintptr_t WriteToConsole = 0x004FCBC0; // iw3mp.exe+FCBC0
 
 		inline constexpr uintptr_t ScreenshotRequest = 0x00154010; // cod4x_021.dll+154010
 		inline constexpr uintptr_t CG_GetUsernameX = 0x00042800; // cod4x_021.dll+0x42800
@@ -33,7 +34,11 @@ namespace offsets {
 } // namespace offset
 
 namespace cvars {
-	inline constexpr uintptr_t fx_draw = 0xC7C5E88; // iw3mp.exe+C7C5E88 <-- mem.write<BYTE>(fx_draw, 0) to turn it on, 1 for off
-	inline constexpr uintptr_t cg_thirdperson = 0xC7B828C; // iw3mp.exe+C7B828C
-	inline constexpr uintptr_t jump_slowdown = 0xC7BC4C0; // iw3mp.exe+C7BC4C0
+	inline constexpr uintptr_t FX_Draw = 0xC7C5E88; // iw3mp.exe+C7C5E88 <-- mem.write<BYTE>(fx_draw, 0) to turn it on, 1 for off
+	inline constexpr uintptr_t CG_Thirdperson = 0xC7B828C; // iw3mp.exe+C7B828C
+	inline constexpr uintptr_t Jump_Slowdown = 0xC7BC4C0; // iw3mp.exe+C7BC4C0
+	inline constexpr uintptr_t CompassShowEnemies = 0xC7BA594; // iw3mp.exe+C7BA594
+
+	// other
+	inline constexpr uintptr_t MaxFPS = 0xC7AB8F8; // iw3mp.exe+C7AB8F8
 } // namespace cvars

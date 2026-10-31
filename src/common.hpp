@@ -8,8 +8,15 @@
 #include <sdk/Entity.hpp>
 #include <sdk/offsets.hpp>
 
+#include <numbers>
+
 // allow using memory functions in other files
 extern Memory Mem;
+
+// math helpers
+#define _USE_MATH_DEFINES 1
+constexpr float DEGTORAD = std::numbers::pi_v<float> / 180.0f;
+constexpr float RADTODEG = 180.0f / std::numbers::pi_v<float>;
 
 // debug prints
 #ifdef _DEBUG

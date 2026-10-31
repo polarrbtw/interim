@@ -10,6 +10,10 @@
 # Zed Editor
 .zed/
 
+# Local files
+*.patch
+*.ps1
+
 # Compiled Object files
 *.slo
 *.lo

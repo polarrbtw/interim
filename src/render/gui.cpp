@@ -7,7 +7,9 @@
 #include <globals.hpp>
 #include <settings.hpp>
 
-#include <sdk/EntityManager.hpp> // TEMPORARY
+// notification setup
+#include "notifications/IconsFontAwesome6.h"
+#include "notifications/fa-solid-900.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -127,6 +129,22 @@ void GUI::SetupMenu(LPDIRECT3DDEVICE9 device) {
 
   ImGui_ImplWin32_Init(hwnd);
   ImGui_ImplDX9_Init(device);
+
+  // FontAwesome setup START (required for icons)
+  ImGuiIO& io = ImGui::GetIO(); (void)io;
+  io.Fonts->AddFontDefault();
+
+  float baseFontSize = 16.0f;
+  float iconFontSize = baseFontSize * 2.0f / 3.0f; // FontAwesome fonts need to have their sizes reduced by 2.0f/3.0f in order to align correctly
+
+  static constexpr ImWchar iconsRanges[] = {ICON_MIN_FA, ICON_MAX_16_FA, 0};
+  ImFontConfig iconsConfig;
+  iconsConfig.MergeMode = true;
+  iconsConfig.PixelSnapH = true;
+  iconsConfig.GlyphMinAdvanceX = iconFontSize;
+  io.Fonts->AddFontFromMemoryCompressedTTF(fa_solid_900_compressed_data, fa_solid_900_compressed_size, iconFontSize, &iconsConfig, iconsRanges);
+
+  // FontAwesome setup END
 
   initialized = true;
 }
